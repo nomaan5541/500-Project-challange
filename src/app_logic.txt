@@ -1,1 +1,0 @@
-Refactored authentication to JWT. Optimized SQL queries, reducing API latency by 40%. Deployed automated CI/CD pipelines for staging. Resolved three critical payment gateway bugs. Implemented Redis caching, decreasing database load by 25%. All sprint deliverables completed ahead of schedule.
