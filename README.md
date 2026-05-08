@@ -1,4 +1,4 @@
-# 500-project-Challange 
+ 
 # 🚀 500 Projects Challenge – HTML, CSS & JavaScript
 
 Welcome to the **500 Projects Challenge** — a complete hands-on journey to master **Frontend Development**, **UI/UX Design**, **JavaScript Logic**, and the fundamentals of **Web Security & Functionality Management** using only:
