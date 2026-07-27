@@ -1,0 +1,225 @@
+body {
+  width: 100%;
+  height: 100%;
+  background: black;
+}
+
+#boo {
+  color: white;
+  margin-bottom: 12px;
+}
+
+#boo.hide {
+  opacity: 0;
+}
+
+.switch-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 100px;
+  height: 25px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: grey;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #459def;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #459def;
+}
+
+input:checked + .slider > div {
+  transform: translateX(65px);
+}
+
+input + .slider > div {
+  transition: transform 0.4s;
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.ghost {
+  position: absolute;
+  left: 0;
+  top: -10px;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border-radius: 100px;
+  animation: bobble 4.3s infinite;
+  filter: drop-shadow(0px 5px 12px rgba(255, 255, 255, 0.6));
+}
+
+@keyframes bobble {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(15%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes sway {
+  0% {
+    transform: translateX(-2px);
+  }
+  50% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(-2px);
+  }
+}
+@keyframes sway-more {
+  0% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(-4px);
+  }
+}
+@keyframes sway-left {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(-4px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+@keyframes sway-left-less {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+@keyframes sway-right {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+@keyframes sway-right-less {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+@keyframes blink {
+  0% {
+    top: 16px;
+    height: 8px;
+  }
+  39% {
+    top: 16px;
+    height: 8px;
+  }
+  40% {
+    top: 20px;
+    height: 2px;
+  }
+  50% {
+    top: 20px;
+    height: 2px;
+  }
+  51% {
+    top: 16px;
+    height: 8px;
+  }
+  100% {
+    top: 16px;
+    height: 8px;
+  }
+}
+.ghost:after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 7px);
+  top: 16px;
+  width: 10px;
+  height: 8px;
+  border-right: 3px solid black;
+  border-left: 3px solid black;
+  animation: bobble 2s infinite, sway-more 2s infinite 1s, blink 4.25s infinite;
+}
+
+/* 
+input:checked + .slider .ghost:after {
+  animation: sway-right 0.5s;
+}
+
+
+input:checked + .slider .ghost:before{
+  animation: sway-right 0.5s;
+}
+
+input:not(:checked) + .slider .ghost:after {
+  animation: sway-left 0.5s;
+}
+
+
+input:not(:checked) + .slider .ghost:before{
+  animation: sway-left 0.5s;
+}
+ */
+.ghost:before {
+  content: "";
+  position: absolute;
+  top: calc(50% - 6px);
+  left: -10%;
+  width: 120%;
+  height: 12px;
+  border-radius: 100px;
+  background-color: white;
+  animation: sway 2s infinite;
+}
