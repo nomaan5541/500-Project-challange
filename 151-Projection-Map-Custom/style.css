@@ -1,0 +1,26 @@
+html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #101014;
+      }
+
+      #app {
+        width: 100%;
+        height: 100%;
+      }
+
+      #fallback {
+        position: fixed;
+        inset: 0;
+        display: none;
+        place-items: center;
+        padding: 20px;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #111;
+        text-align: center;
+        z-index: 100;
+      }
