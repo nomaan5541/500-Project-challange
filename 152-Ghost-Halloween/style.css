@@ -1,0 +1,128 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #00034b;
+}
+
+.ghost {
+  position: relative;
+  width: 150px;
+  height: 225px;
+  background: #ffffff;
+  box-shadow: -17px 0px 0px #dbdbdb inset, 0 0 50px #5939db;
+  border-radius: 100px 100px 0 0;
+  animation: float 2s infinite;
+}
+.ghost__eyes {
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  padding: 70px 0 0;
+  width: 90px;
+  height: 20px;
+}
+.ghost__eyes:before, .ghost__eyes:after {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 25px;
+  background: #00034b;
+  border-radius: 50%;
+}
+.ghost__dimples {
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  padding: 35px 0 0;
+  width: 130px;
+  height: 20px;
+}
+.ghost__dimples:before, .ghost__dimples:after {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 15px;
+  background: #ffbeff;
+  border-radius: 50%;
+}
+.ghost__feet {
+  width: 100%;
+  position: absolute;
+  bottom: -13px;
+  display: flex;
+  justify-content: space-between;
+}
+.ghost__feet-foot {
+  width: 25%;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+.ghost__feet-foot:last-child {
+  background-image: linear-gradient(to right, #ffffff 55%, #dbdbdb 45%);
+}
+
+.shadow {
+  background: #000232;
+  width: 150px;
+  height: 40px;
+  margin-top: 50px;
+  border-radius: 50%;
+  animation: shadow 2s infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-45px);
+  }
+}
+@keyframes shadow {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+}
+
+/* Tooltips */
+.tooltip {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 40px;
+  font-size: 0.4rem;
+  font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  text-transform: uppercase;
+  transform: translate(-50%, -100%);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+.tooltip:after {
+  display: block;
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  content: "";
+  border: solid;
+  border-width: 10px 10px 0 10px;
+  border-color: transparent;
+  transform: translate(-50%, 100%);
+}
