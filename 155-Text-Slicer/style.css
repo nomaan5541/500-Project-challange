@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400..800&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #243b4a;
+  --c1: #87bcde;
+  --c2: #805e73;
+  --c3: #6a8a9f;
+  --c4: #a07d93;
+  --font-main: 'Syne', sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--c1);
+  font-family: var(--font-main);
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  position: fixed;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.slice-layer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: clamp(3rem, 15vw, 10rem);
+  font-weight: 800;
+  white-space: nowrap;
+  line-height: 1;
+  pointer-events: all;
+}
+
+.slice-layer.locked {
+  mix-blend-mode: difference;
+  z-index: 1;
+}
+
+.ui-overlay {
+  width: 100%;
+  padding: 1rem;
+  background: var(--bg);
+  border-top: 1px solid var(--c3);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.code-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--c3);
+  padding: 0.75rem;
+  width: 100%;
+  overflow: hidden; 
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  margin-bottom: 0.5rem;
+  color: var(--c3);
+}
+
+pre {
+  margin: 0;
+  font-family: monospace;
+  font-size: 0.6rem;
+  color: var(--c4);
+  max-height: 50px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.mode-toggle, .button-grid {
+  display: flex;
+  gap: 0.7rem;
+  width: 100%;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.7rem;
+  color: var(--c3);
+  min-width: 40px;
+}
+
+.btn {
+  background: transparent;
+  border: 1px solid var(--c3);
+  color: var(--c1);
+  padding: 1rem 0.3rem;
+  font-family: var(--font-main);
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.btn.active {
+  background: var(--c1);
+  color: var(--bg);
+  border-color: var(--c1);
+}
+
+#copy-btn {
+  background: var(--c3);
+  color: var(--bg);
+  border: none;
+  font-size: 0.55rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+#reset-btn {
+  border-color: var(--c2);
+  color: var(--c2);
+  padding: 8px;
+}
+
+@media (min-width: 768px) {
+  .ui-overlay {
+    flex-direction: row;
+    padding: 1.5rem 3rem;
+  }
+  .code-card {
+    max-width: 350px;
+  }
+}
