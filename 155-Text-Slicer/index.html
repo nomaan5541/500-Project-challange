@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Text Slicer</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <main id="app">
+  <section id="stage" class="stage"></section>
+
+  <section class="ui-overlay">
+    
+    <div class="code-card">
+      <div class="card-header">
+        <span id="mode-display">mode:</span>
+        <button id="copy-btn">copy css</button>
+      </div>
+      <pre><code id="css-output">/* move cursor to distort, tap to lock */</code></pre>
+    </div>
+
+    <nav class="controls">
+      <div class="mode-toggle">
+        <button class="btn mode-btn active" data-mode="h">horizontal</button>
+        <button class="btn mode-btn" data-mode="v">vertical</button>
+      </div>
+
+      <div class="control-row">
+        <span class="label">slices</span>
+        <div class="button-grid">
+          <button class="btn qty-btn" data-val="2">2</button>
+          <button class="btn qty-btn active" data-val="4">4</button>
+          <button class="btn qty-btn" data-val="6">6</button>
+          <button class="btn qty-btn" data-val="8">8</button>
+        </div>
+      </div>
+
+      <button id="reset-btn" class="btn">reset specimen</button>
+    </nav>
+  </section>
+</main>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
