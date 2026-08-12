@@ -1,0 +1,30 @@
+/* Copyright (c) 2025 by Deckard (https://codepen.io/dermalhealth/pen/zxrKjQd) */
+body,
+html {
+	margin: 0;
+	padding: 0;
+}
+
+canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+.lil-gui {
+	display: none !important;
+	--width: 400px;
+	--widget-height: 20px;
+	font-size: 15px;
+	--input-font-size: 15px;
+	--padding: 10px;
+	--spacing: 10px;
+	--slider-knob-width: 5px;
+	--background-color: rgba(5, 0, 15, 0.9);
+	--widget-color: rgba(255, 255, 255, 0.3);
+	--focus-color: rgba(255, 255, 255, 0.4);
+	--hover-color: rgba(255, 255, 255, 0.5);
+	--font-family: monospace;
+	z-index: 1;
+}
