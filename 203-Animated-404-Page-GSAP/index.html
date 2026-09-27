@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Animated 404 Page GSAP | CodeTap</title>
+  <link rel='stylesheet' href='https://codepen.io/GreenSock/pen/xxmzBrw.css'>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <p class="braces">we can't find that page...</p>
+  <h1>Oops</h1>
+
+  <section class="hero pricing-hero" data-block="pricing-hero">
+    <div class="container">
+      <div class="pricing-hero__content">
+        <div class="pricing-hero__flair">
+          <div class="pricing-hero__hand">
+            <img class="pricing-hero__drag" src="https://assets.codepen.io/16327/hand-drag.png" alt="">
+            <img class="pricing-hero__rock" src="https://assets.codepen.io/16327/hand-rock.png" alt="">
+            <img class="pricing-hero__handle" src="https://assets.codepen.io/16327/2D-circle.png" alt="">
+            <small>drag me</small>
+          </div>
+
+          <div class="image-preload" aria-hidden="true">
+            <img data-key="combo" src="https://assets.codepen.io/16327/3D-combo.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="cone" src="https://assets.codepen.io/16327/3D-cone.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="hoop" src="https://assets.codepen.io/16327/3D-hoop.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="keyframe" src="https://assets.codepen.io/16327/3D-keyframe.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="semi" src="https://assets.codepen.io/16327/3D-semi.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="spiral" src="https://assets.codepen.io/16327/3D-spiral.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="squish" src="https://assets.codepen.io/16327/3D-squish.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="triangle" src="https://assets.codepen.io/16327/3D-triangle.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="tunnel" src="https://assets.codepen.io/16327/3D-tunnel.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="wat" src="https://assets.codepen.io/16327/3D-poly.png" width="1" height="1"
+              style="position: absolute; left: -9999px;" />
+          </div>
+          <div class="explosion-preload" aria-hidden="true">
+            <img data-key="blue-circle" src="https://assets.codepen.io/16327/2D-circles.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="green-keyframe" src="https://assets.codepen.io/16327/2D-keyframe.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="orange-lightning" src="https://assets.codepen.io/16327/2D-lightning.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="orange-star" src="https://assets.codepen.io/16327/2D-star.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="purple-flower" src="https://assets.codepen.io/16327/2D-flower.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="cone" src="https://assets.codepen.io/16327/3D-cone.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="keyframe" src="https://assets.codepen.io/16327/3D-spiral.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="spiral" src="https://assets.codepen.io/16327/3D-spiral.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="tunnel" src="https://assets.codepen.io/16327/3D-tunnel.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="hoop" src="https://assets.codepen.io/16327/3D-hoop.png"
+              style="position: absolute; left: -9999px;" />
+            <img data-key="semi" src="https://assets.codepen.io/16327/3D-semi.png"
+              style="position: absolute; left: -9999px;" />
+          </div>
+
+        </div>
+      </div>
+      <svg class="pricing-hero__canvas"></svg>
+      <div class="pricing-hero__proxy"></div>
+    </div>
+  </section>
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/Observer.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/Physics2DPlugin.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/CustomEase.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/CustomWiggle.min.js"></script>
+
+  <script src="./script.js"></script>
+
+</body>
+
+</html>
