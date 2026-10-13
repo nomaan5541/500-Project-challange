@@ -1,0 +1,90 @@
+.cards {
+  display: grid;
+  grid-template-columns: 300px 300px;
+  gap: 10px;
+}
+
+.card {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.card__image-wrapper {
+  height: 600px;
+  will-change: transform;
+}
+
+.card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body {
+  padding: 0 20px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgb(150, 159, 204);
+  background: radial-gradient(
+    circle,
+    hsl(230, 20%, 70%) 0%,
+    rgba(239, 239, 244, 1) 100%
+  );
+}
+
+.header {
+  height: 50vh;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scroll-icon {
+  width: 100px;
+  color: rgb(57, 61, 80);
+  margin-top: 50px;
+}
+
+h2 {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 50px;
+  text-align: center;
+  color: rgb(65, 69, 85);
+  max-width: 500px;
+  margin: 80px 0 0;
+}
+
+.space {
+  height: 40vh;
+}
+
+@media (max-width: 500px) {
+  .cards {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  h2 {
+    font-size: 38px;
+  }
+
+  .scroll-icon {
+    width: 100px;
+  }
+
+  body {
+    background: radial-gradient(
+      circle,
+      hsl(230, 20%, 70%) 50%,
+      rgba(239, 239, 244, 1) 100%
+    );
+  }
+}
