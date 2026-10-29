@@ -1,0 +1,291 @@
+body {
+	height: 100vh;
+	margin: 0;
+	display: grid;
+	place-items: center;
+	background: #cccccc;
+}
+
+.konami {
+	font-size: 4rem;
+	margin: auto;
+	color: white;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	gap: 0.25ch;
+	padding: 1rem;
+	background: repeating-linear-gradient(
+		to bottom,
+		rgba(18, 16, 16, 0) 0px,
+		rgba(0, 0, 0, 0.25) 1px,
+		transparent 2px
+	);
+}
+
+.d-pad {
+	position: relative;
+	background: #333333;
+	width: 1ch;
+	height: 1.5em;
+	margin-inline: 0.45em;
+	border-radius: 8px;
+	filter: drop-shadow(4px 4px rgba(0, 0, 0, 0.5));
+}
+
+.d-pad::before {
+	position: absolute;
+	content: "";
+	background: #333333;
+	width: 1.5em;
+	height: 1ch;
+	left: calc(50% - 0.75em);
+	top: calc(50% - 0.5ch);
+	border-radius: 8px;
+}
+
+.up::after,
+.down::after,
+.left::after,
+.right::after {
+	position: absolute;
+	content: "";
+	display: inline-block;
+	border-left: 0.25ch solid transparent;
+	border-right: 0.25ch solid transparent;
+	border-bottom: 0.25ch solid currentcolor;
+	border-radius: 8px;
+	left: calc(50% - 0.25ch);
+	top: 6px;
+}
+
+.down {
+	height: 100%;
+	transform: rotate(180deg);
+}
+
+.left {
+	height: 100%;
+	transform: rotate(-90deg);
+}
+
+.right {
+	height: 100%;
+	transform: rotate(90deg);
+}
+
+.button {
+	width: 1.25em;
+	height: 1.25em;
+	margin: 0.125em;
+	line-height: 1.25em;
+	text-align: center;
+	border-radius: 50%;
+	box-shadow: inset 2px 2px 0 2px rgba(255, 255, 255, 0.3),
+		2px 2px 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.b {
+	background: red;
+}
+
+.a {
+	background: darkgreen;
+}
+
+dialog .controller {
+	--controller-color: #ced0cb;
+	--controller-print-color: #29333b;
+	--controller-text-color: #e70a28;
+	position: relative;
+	background: var(--controller-color);
+	width: 80vw;
+	aspect-ratio: 5/2;
+	margin: 0 auto;
+	margin-top: 15vh;
+	border-radius: 0.3rem;
+}
+
+dialog .controller::before,
+dialog .controller:after {
+	display: block;
+	content: "";
+	position: absolute;
+}
+
+dialog .controller::before {
+	background: black;
+	width: 2vw;
+	height: 15vh;
+	top: -15vh;
+	left: 25vw;
+	border-bottom: 10px solid #babbb4;
+}
+
+dialog .controller::after {
+	background: var(--controller-print-color);
+	top: 2vw;
+	left: 2vw;
+	right: 2vw;
+	bottom: 2vw;
+	border-radius: 0.3rem;
+}
+
+dialog .controller > * {
+	z-index: 1;
+}
+
+dialog .d-pad,
+dialog .d-pad::before,
+dialog .d-pad::after {
+	display: block;
+	content: "";
+	background: black;
+	position: absolute;
+}
+
+dialog .d-pad {
+	width: 5vw;
+	height: 13.5vw;
+	top: 13vw;
+	left: 13vw;
+	border-radius: 8px;
+	box-shadow: 3px 0px white, 0px 3px white, 3px 3px white, -3px 0px white,
+		0px -3px white, -3px -3px white;
+}
+
+dialog .d-pad::before,
+dialog .d-pad::after {
+	width: 4.3vw;
+	height: 5vw;
+	top: calc(50% - 2.5vw);
+}
+
+dialog .d-pad::before {
+	left: -4.3vw;
+	border-radius: 8px 0 0 8px;
+	box-shadow: 0px 3px white, -3px 0px white, 0px -3px white, -3px -3px white;
+}
+
+dialog .d-pad::after {
+	right: -4.3vw;
+	border-radius: 0 8px 8px 0;
+	box-shadow: 0px 3px white, 3px 0px white, 0px -3px white, 3px -3px white;
+}
+
+dialog .middle {
+	position: absolute;
+	background: repeating-linear-gradient(
+		to bottom,
+		#929d93 0 3vw,
+		var(--controller-print-color) 3vw 4.5vw
+	);
+	top: 2vw;
+	left: calc(50% - 10vw);
+	bottom: 2vw;
+	width: 20vw;
+}
+
+dialog .middle span {
+	font-family: "Press Start 2P";
+	font-size: 1.4vw;
+	font-weight: 600;
+	text-transform: uppercase;
+	color: var(--controller-text-color);
+	position: absolute;
+	top: 10vw;
+	left: 1vw;
+}
+dialog .middle span:nth-child(2) {
+	left: unset;
+	right: 1vw;
+}
+
+dialog .middle .buttons {
+	position: absolute;
+	background: var(--controller-color);
+	height: 6.5vw;
+	width: calc(20vw - 2vw);
+	top: 13vw;
+	border: inset 1vw;
+}
+
+dialog .middle .buttons::before,
+dialog .middle .buttons::after {
+	display: block;
+	content: "";
+	width: 6vw;
+	height: 2.3vw;
+	background: black;
+	position: absolute;
+	top: calc(50% - 1.15vw);
+	border-radius: 35%;
+	box-shadow: 2px -3px 3px rgba(0, 0, 0, 0.6);
+}
+
+dialog .middle .buttons::before {
+	left: 1.5vw;
+}
+dialog .middle .buttons::after {
+	right: 1.5vw;
+}
+
+dialog .branding {
+	font-family: "Press Start 2P";
+	font-size: 2vw;
+	font-weight: 800;
+	color: var(--controller-text-color);
+	position: absolute;
+	top: 10vw;
+	right: 6vw;
+}
+
+dialog .b,
+dialog .a {
+	position: absolute;
+	background: #ced0cb;
+	width: 8vw;
+	aspect-ratio: 1;
+	bottom: 3vw;
+}
+
+dialog .b {
+	right: 18vw;
+}
+
+dialog .a {
+	right: 8vw;
+}
+
+dialog .b::before,
+dialog .a::before {
+	display: block;
+	content: "";
+	background: #e70a28;
+	border-radius: 50%;
+	width: 6vw;
+	aspect-ratio: 1;
+	margin: 1vw;
+	box-shadow: 2px -3px 3px rgba(0, 0, 0, 0.6);
+}
+
+dialog .b::after,
+.a::after {
+	display: block;
+	background: #29333b;
+	width: 100%;
+	font-family: "Press Start 2P";
+	font-size: 2vw;
+	font-weight: 800;
+	color: #e70a28;
+	text-align: right;
+	padding-top: 1vw;
+}
+
+dialog .b::after {
+	content: "B";
+}
+
+dialog .a::after {
+	content: "A";
+}
