@@ -1,0 +1,143 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+* {
+	margin: 0;
+}
+
+:root {
+	--color-background: #000;
+	--color-text: #fff;
+}
+
+body {
+	background: var(--color-background);
+	color: var(--color-text);
+	font-family: monospace;
+	line-height: 1.5;
+}
+h2 {
+	font-size: 1.5rem;
+	line-height: 1.2;
+	text-transform: uppercase;
+	font-weight: 800;
+}
+h3 {
+	font-size: 0.6rem;
+	font-weight: 400;
+}
+img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.border-outer,
+.border-inner {
+	clip-path: polygon(
+		/* left, top edge */ var(--corner-size) 0%,
+		/* right, top edge */ calc(100% - var(--corner-size)) 0%,
+		/* right edge, top */ 100% var(--corner-size),
+		/* right edge, bottom */ 100% calc(100% - var(--corner-size)),
+		/* right, bottom edge */ calc(100% - var(--corner-size)) 100%,
+		/* left, bottom edge */ var(--corner-size) 100%,
+		/* left edge, bottom */ 0% calc(100% - var(--corner-size)),
+		/* left edge, top */ 0% var(--corner-size)
+	);
+}
+.border-outer {
+	background: var(--color-text);
+	padding: var(--border-width);
+	display: flex;
+	flex-direction: column;
+}
+.border-inner {
+	flex-grow: 1;
+	background: var(--color-background);
+}
+.cards {
+	display: flex;
+	min-height: 100dvh;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.card {
+	--corner-size: 1.75rem;
+	--border-width: 1px;
+	--image-column-width: 8rem;
+	--content-width: 19rem;
+	display: grid;
+	position: relative;
+	grid-template-columns: var(--image-column-width) calc(2 * var(--corner-size));
+	transition: grid-template-columns 450ms ease 50ms;
+	height: 28rem;
+	overflow:clip;
+	> * {
+		min-width: 0;
+		grid-row: 1;
+	}
+}
+.card-background {
+	grid-column: 1 / -1;
+	img {
+		height: 100%;
+		object-fit: cover;
+		width: calc(var(--image-column-width) + var(--corner-size));
+	}
+}
+.card-content {
+	grid-column: 2;
+	position: relative;
+}
+.card-copy {
+}
+
+.card-content-layout {
+	display: flex;
+	gap: 2rem;
+	position: absolute;
+	top: var(--corner-size);
+	left: var(--corner-size);
+	height: calc(100% - 6rem);
+	width: var(--content-width);
+	translate: -1rem 0;
+	transition: translate 450ms;
+}
+.card-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+h2.vertical-title {
+	writing-mode: vertical-lr;
+}
+
+.toggle {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 1rem;
+	input {
+		display: none;
+	}
+	svg {
+		transition: rotate 250ms;
+	}
+}
+
+.card:has(input:checked) {
+	grid-template-columns: var(--image-column-width) var(--content-width);
+	.card-content-layout {
+		translate: -4rem 0;
+	}
+}
+
+input:checked + svg {
+	line-height: 1;
+	rotate: 45deg;
+}
