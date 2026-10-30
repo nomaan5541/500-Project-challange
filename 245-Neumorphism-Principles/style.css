@@ -1,0 +1,141 @@
+@import url("https://fonts.googleapis.com/css2?family=Alumni+Sans+Pinstripe&display=swap");
+@media screen and (max-width: 600px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+:root {
+  --height: 1;
+}
+
+body {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  gap: 1rem;
+  height: 100vh;
+  background-color: #ddd;
+  overflow: hidden;
+  padding: 0 calc(50vw - 16rem);
+  font-size: 1.5rem;
+  color: #333;
+  line-height: 0.9;
+  font-family: "Alumni Sans Pinstripe", sans-serif;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 1rem;
+}
+.tile:before, .tile:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+}
+.tile--circle {
+  border-radius: 50%;
+}
+.tile--circle:before {
+  border-radius: 50%;
+}
+
+.padded {
+  padding: 0.1rem;
+}
+
+.up {
+  box-shadow: rgba(0, 0, 0, 0.5) calc(0.33rem * var(--height)) calc(0.33rem * var(--height)) 0.6rem;
+}
+.up:before {
+  box-shadow: rgba(255, 255, 255, 0.5) calc(-0.33rem * var(--height)) calc(-0.33rem * var(--height)) 0.6rem;
+}
+
+.down {
+  box-shadow: inset rgba(0, 0, 0, 0.5) calc(0.25rem * var(--height)) calc(0.25rem * var(--height)) 0.6rem;
+}
+.down:before {
+  box-shadow: inset rgba(255, 255, 255, 0.5) calc(-0.25rem * var(--height)) calc(-0.25rem * var(--height)) 0.6rem;
+}
+
+.button {
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.5) calc(0.33rem * var(--height)) calc(0.33rem * var(--height)) 0.6rem;
+  transition: box-shadow 0.15s 0.15s ease-in;
+}
+.button:before {
+  box-shadow: rgba(255, 255, 255, 0.5) calc(-0.33rem * var(--height)) calc(-0.33rem * var(--height)) 0.6rem;
+  transition: box-shadow 0.15s 0.15s ease-in;
+}
+.button span {
+  transition: transform 0.3s ease-in-out;
+}
+.button > div {
+  box-shadow: inset rgba(0, 0, 0, 0.5) 0 0 0;
+  transition: box-shadow 0.15s ease-in;
+}
+.button > div:before {
+  box-shadow: inset rgba(255, 255, 255, 0.5) 0 0 0;
+  transition: box-shadow 0.15s ease-in;
+}
+.button:hover {
+  box-shadow: rgba(0, 0, 0, 0.5) 0 0 0;
+  transition: box-shadow 0.15s ease-out;
+}
+.button:hover:before {
+  box-shadow: rgba(255, 255, 255, 0.5) 0 0 0;
+  transition: box-shadow 0.15s ease-out;
+}
+.button:hover > div {
+  box-shadow: inset rgba(0, 0, 0, 0.5) calc(0.25rem * var(--height)) calc(0.25rem * var(--height)) 0.6rem;
+  transition: box-shadow 0.15s 0.15s ease-out;
+}
+.button:hover > div:before {
+  box-shadow: inset rgba(255, 255, 255, 0.5) calc(-0.25rem * var(--height)) calc(-0.25rem * var(--height)) 0.6rem;
+  transition: box-shadow 0.15s 0.15s ease-out;
+}
+.button:hover span {
+  transform: translateY(0.1516rem);
+}
+
+.round {
+  background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.5), transparent, rgba(0, 0, 0, 0.5));
+  box-shadow: rgba(0, 0, 0, 0.5) 0.33rem 0.33rem 0.6rem;
+}
+
+.round-down {
+  background: radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.5), transparent, rgba(0, 0, 0, 0.5));
+}
+
+.round-button {
+  cursor: pointer;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5) 15%, transparent 30%, rgba(0, 0, 0, 0.5));
+  background-position: -4rem -4rem;
+  background-size: 200% 200%;
+  box-shadow: rgba(0, 0, 0, 0.5) 0.33rem 0.33rem 0.6rem;
+  transition: background 0.3s ease-in-out, box-shadow 0.15s 0.15s ease-in-out;
+}
+.round-button span {
+  transition: transform 0.3s ease-in-out;
+}
+.round-button:hover {
+  background-position: -2rem -2rem;
+  box-shadow: rgba(0, 0, 0, 0.5) 0 0 0;
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.round-button:hover span {
+  transform: translateY(0.1516rem);
+}
