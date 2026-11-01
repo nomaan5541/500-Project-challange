@@ -1,0 +1,397 @@
+@layer reset, base, composition, feature, utilities;
+
+@import "https://cdn.jsdelivr.net/npm/kiso.css@latest/kiso.css" layer(reset);
+
+@layer feature {
+  @scope (.product-cards.scope) to (.scope) {
+    :scope {
+      container: --root / inline-size;
+    }
+
+    ._body {
+      --composable-grid--fill-mode: var(--product-cards--fill-mode, auto-fill);
+      --composable-grid--row-gap: var(--product-cards--gap, 1.5rem);
+      --composable-grid--column-gap: var(--product-cards--gap, 1.5rem);
+      --composable-grid--column-max-count: var(
+        --product-cards--column-max-count,
+        4
+      );
+      --composable-grid--column-min-width: var(
+        --product-cards--column-min-width,
+        20rem
+      );
+
+      & > * {
+        grid-row: span 5;
+      }
+    }
+
+    ._card {
+      --_accent: var(--product-card--accent, #c34a36);
+      --_background: var(--product-card--background, var(--color-lightest));
+      --_row-gap: var(--product-card--row-gap, 0.25rlh);
+      --_padding: var(--product-card--padding, 16px);
+      --_radius: var(--product-card--radius, 40px);
+      --_duration: var(--product-card--duration, 300ms);
+
+      --_accent-contrast: oklch(from var(--_accent) sign(0.7 - l) 0 0);
+      --_inner-radius: calc(var(--_radius) - var(--_padding));
+      --_category-radius: 16px;
+
+      display: block grid;
+      reading-flow: grid-rows;
+      grid-template-columns:
+        [--full-start --heading-start]
+        minmax(0, 1fr)
+        [--heading-end --price-start]
+        max-content
+        [--price-end --full-end];
+      grid-template-rows: subgrid;
+      gap: var(--_row-gap) 1rem;
+      padding: var(--_padding);
+      border-radius: var(--_radius);
+      box-shadow: 0 20px 40px -14px oklch(from #000 l c h / 25%);
+      background-color: var(--_background);
+
+      /* 15rem 未満では縮小させる */
+      zoom: clamp(0, progress(100cqi, 0px, 15rem), 1);
+
+      & > * {
+        grid-column: --full;
+      }
+
+      & > ._thumbnail {
+        grid-row: 1 / 2;
+      }
+
+      & > ._category {
+        z-index: 1;
+        grid-row: 1 / 2;
+        place-self: start;
+        max-inline-size: calc(
+          100% - (var(--_category-radius) + var(--_inner-radius))
+        );
+      }
+
+      & > ._heading {
+        grid-column: --heading;
+        align-self: center;
+      }
+
+      & > ._price {
+        grid-column: --price;
+        place-self: center end;
+      }
+    }
+
+    ._thumbnail {
+      --_scale-has-hocus: 1.1;
+
+      overflow: clip;
+      border-radius: var(--_inner-radius);
+
+      & > img {
+        inline-size: 100%;
+        aspect-ratio: 1;
+
+        @media (prefers-reduced-motion: no-preference) {
+          transition-property: scale;
+          transition-duration: var(--_duration);
+        }
+      }
+
+      ._card:has(:any-link:hover) & > img {
+        @media (any-hover) {
+          scale: var(--_scale-has-hocus);
+        }
+      }
+
+      ._card:has(:focus-visible) & > img {
+        scale: var(--_scale-has-hocus);
+      }
+    }
+
+    ._heading {
+      --fluid-text--min-font-size: 16;
+      --fluid-text--max-font-size: 24;
+
+      padding-block: calc(var(--_row-gap) * 2);
+    }
+
+    ._price {
+      padding-block: 0.5em;
+      padding-inline: 1em;
+      border-radius: calc(infinity * 1px);
+      background-color: var(--_accent);
+      color: var(--_accent-contrast);
+      font-variant-numeric: tabular-nums;
+    }
+
+    ._category {
+      position: relative;
+      align-content: center;
+      min-block-size: calc(var(--_category-radius) * 2);
+      padding-block: 1em;
+      padding-inline: 1.5em;
+      border-end-end-radius: var(--_category-radius);
+      background-color: var(--_background);
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        block-size: var(--_category-radius);
+        aspect-ratio: 1;
+        mask-image: radial-gradient(
+          circle at 100% 100%,
+          transparent var(--_category-radius),
+          red calc(var(--_category-radius) + 1px)
+            /* ギザギザを防止するために 1px 加える */
+        );
+        background-color: inherit;
+      }
+
+      &::before {
+        inset-block-start: 0;
+        inset-inline-start: 100%;
+      }
+
+      &::after {
+        inset-block-start: 100%;
+        inset-inline-start: 0;
+      }
+    }
+
+    ._tag-list {
+      --composable-cluster--gap: 0.5rem;
+
+      padding-block: calc(var(--_row-gap) * 2);
+    }
+
+    ._tag {
+      padding-block: 0.5em;
+      padding-inline: 1em;
+      border-radius: calc(infinity * 1px);
+      background-color: oklch(from var(--_accent) 90% 25% h);
+      font-size: 0.75rem;
+    }
+
+    ._button {
+      --_background-default: var(--_accent);
+      --_backgorund-hocus: oklch(from var(--_background-default) 60% 60% h);
+      --_foreground-default: var(--_accent-contrast);
+      --_foreground-hocus: oklch(
+        from var(--_backgorund-hocus) sign(0.7 - l) 0 0
+      );
+
+      display: block flex;
+      justify-content: center;
+      align-items: center;
+      column-gap: 1ch;
+      padding: 1em;
+      border-radius: calc(infinity * 1px);
+      background-color: var(--_background-default);
+      color: var(--_foreground-default);
+      font-weight: bolder;
+      transition-property: background-color, color;
+      transition-duration: var(--_duration);
+
+      &::before {
+        content: "";
+        flex: 0 0 1em;
+        mask: var(--icon-cart) no-repeat center / contain;
+        aspect-ratio: 1;
+        background: conic-gradient(currentcolor 0 0), CanvasText;
+      }
+
+      &:any-link:hover {
+        @media (any-hover) {
+          background-color: var(--_backgorund-hocus);
+          color: var(--_foreground-hocus);
+        }
+      }
+
+      &:focus-visible {
+        background-color: var(--_backgorund-hocus);
+        color: var(--_foreground-hocus);
+      }
+    }
+  }
+}
+
+@layer composition {
+  .composable-grid {
+    --_fill-mode: var(--composable-grid--fill-mode, auto-fit);
+    --_row-gap: var(--composable-grid--row-gap, 1.5rem);
+    --_column-gap: var(--composable-grid--column-gap, 1.5rem);
+    --_column-max-count: var(--composable-grid--column-max-count, 5);
+    --_column-min-width: var(--composable-grid--column-min-width, 20rem);
+
+    /* コンテナの横幅からギャップの合計値を引いたものをn等分する */
+    --_column-width-calculated: calc(
+      (100% - var(--_column-gap) * (var(--_column-max-count) - 1)) /
+        var(--_column-max-count)
+    );
+
+    /* 最終的に適用される列の幅。理想の幅と最小幅を比較し、大きい方を採用します。*/
+    --_column-width: min(
+      100%,
+      max(var(--_column-min-width), var(--_column-width-calculated))
+    );
+
+    display: block grid;
+    grid-template-columns: repeat(
+      var(--_fill-mode),
+      minmax(var(--_column-width), 1fr)
+    );
+    gap: var(--_row-gap) var(--_column-gap);
+  }
+
+  .composable-cluster {
+    --_gap: var(--composable-cluster--gap, 1rem);
+    --_justify-content: var(--composable-cluster--justify-content, start);
+    --_align-items: var(--composable-cluster--align-items, center);
+    --_align-content: var(--composable-cluster--align-content, start);
+
+    display: block flex;
+    flex-wrap: wrap;
+    gap: var(--_gap);
+    justify-content: var(--_justify-content);
+    align-items: var(--_align-items);
+    align-content: var(--_align-content);
+  }
+
+  .composable-line-clamp {
+    --_limit: var(--composable-line-clamp--limit, 3);
+
+    display: -webkit-box;
+    overflow-block: clip;
+    -webkit-box-orient: block-axis;
+    -webkit-line-clamp: var(--_limit);
+
+    @supports not (overflow-block: clip) {
+      overflow-y: clip;
+    }
+  }
+}
+
+@layer utilities {
+  .-fluid-text {
+    --_fluid-text--min-width: var(--fluid-text--min-width, 375);
+    --_fluid-text--max-width: var(--fluid-text--max-width, 1280);
+    --_fluid-text--min-font-size: var(--fluid-text--min-font-size, 14);
+    --_fluid-text--max-font-size: var(--fluid-text--max-font-size, 16);
+    --_fluid-text--base-font-size: var(--fluid-text--base-font-size, 16);
+    --_fluid-text--relative-unit: var(
+      --fluid-text--relative-unit,
+      100svi
+    ); /* 100svi or 100cqi */
+
+    /* slope and intercept calculations */
+    --_fluid-text--slope: calc(
+      (var(--_fluid-text--max-font-size) - var(--_fluid-text--min-font-size)) /
+        (var(--_fluid-text--max-width) - var(--_fluid-text--min-width))
+    );
+    --_fluid-text--intercept: calc(
+      var(--_fluid-text--min-font-size) - var(--_fluid-text--slope) *
+        var(--_fluid-text--min-width)
+    );
+    --_fluid-text--font-size: clamp(
+      var(--_fluid-text--min-font-size) / var(--_fluid-text--base-font-size) *
+        1rem,
+      var(--_fluid-text--slope) * var(--_fluid-text--relative-unit) +
+        var(--_fluid-text--intercept) / var(--_fluid-text--base-font-size) *
+        1rem,
+      var(--_fluid-text--max-font-size) / var(--_fluid-text--base-font-size) *
+        1rem
+    );
+
+    font-size: var(--_fluid-text--font-size);
+  }
+
+  .-trim-both {
+    text-box: trim-both cap alphabetic;
+
+    &:lang(ja) {
+      text-box: trim-both text;
+    }
+  }
+}
+
+@layer base {
+  :root {
+    --_background: #fcfcfc;
+    --_grid-color: #efefef;
+
+    background-image: linear-gradient(var(--_grid-color) 2px, transparent 2px),
+      linear-gradient(90deg, var(--_grid-color) 2px, transparent 2px),
+      linear-gradient(var(--_grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--_grid-color) 1px, var(--_background) 1px);
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+    background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+    color: var(--color-darkest);
+    font-family: Montserrat, sans-serif;
+    line-height: 1.618;
+  }
+
+  body {
+    padding-block: 2rlh;
+    padding-inline: max(24px, 5%);
+
+    & > * {
+      max-inline-size: 80rem;
+      margin-inline: auto;
+    }
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) {
+    line-height: 1.25;
+  }
+
+  img {
+    display: block flow;
+    object-fit: cover;
+  }
+}
+
+@property --color-darkest {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #444;
+}
+
+@property --color-darker {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #696969;
+}
+
+@property --color-dark {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #999;
+}
+
+@property --color-light {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #ccc;
+}
+
+@property --color-lighter {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #ececec;
+}
+
+@property --color-lightest {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: oklch(from #ececec calc(l + 0.05) c h);
+}
+
+@property --icon-cart {
+  syntax: "<url>";
+  inherits: false;
+  initial-value: url('data:image/svg+xml,<svg viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path fill="red" d="M0 24C0 10.7 10.7 0 24 0L69.5 0c22 0 41.5 12.8 50.6 32l411 0c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3l-288.5 0 5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5L488 336c13.3 0 24 10.7 24 24s-10.7 24-24 24l-288.3 0c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5L24 48C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z" /></svg>');
+}
