@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Breathing Patterns | CodeTap</title>
+    <link rel="apple-touch-icon" href="https://codetap.org/assets/img/favicon.png">
+    <link rel="icon" type="image/png" href="https://codetap.org/assets/img/favicon.png">
+</head>
+
+<body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Art Animation</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script>
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            background(0);
+        }
+
+        function draw() {
+            background(0, 25);
+            translate(width / 2, height / 2);
+
+            noFill();
+            stroke(255, 10);
+            strokeWeight(1);
+
+            const time = frameCount * 0.008;
+            const numLines = 80;
+            const numPoints = 200;
+
+            for (let i = 0; i < numLines; i++) {
+                const linePhase = (i / numLines) * TWO_PI;
+
+                beginShape();
+                for (let j = 0; j <= numPoints; j++) {
+                    const pointPhase = j / numPoints;
+
+                    const y = map(pointPhase, 0, 1, -height / 2.5, height / 2.5);
+
+                    const envelope = sin(pointPhase * PI);
+                    const wave1 = sin(time + linePhase) * 60;
+                    const wave2 = sin(pointPhase * 8 + time * 2) * 40;
+                    const centerComplexity = pow(cos(pointPhase * PI - HALF_PI), 2) * 100;
+                    const wave3 = cos(linePhase * 4 - time) * centerComplexity;
+                    const x = envelope * (wave1 + wave2 + wave3 + 60);
+
+                    vertex(-x, y);
+                }
+                endShape();
+
+                beginShape();
+                for (let j = 0; j <= numPoints; j++) {
+                    const pointPhase = j / numPoints;
+                    const y = map(pointPhase, 0, 1, -height / 2.5, height / 2.5);
+
+                    const envelope = sin(pointPhase * PI);
+                    const wave1 = sin(time + linePhase) * 60;
+                    const wave2 = sin(pointPhase * 8 + time * 2) * 40;
+                    const centerComplexity = pow(cos(pointPhase * PI - HALF_PI), 2) * 100;
+                    const wave3 = cos(linePhase * 4 - time) * centerComplexity;
+                    const x = envelope * (wave1 + wave2 + wave3 + 60);
+
+                    vertex(x, y);
+                }
+                endShape();
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+    </script>
+
+</body>
+
+</html>
