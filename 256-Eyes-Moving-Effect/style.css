@@ -1,0 +1,62 @@
+@import url("https://fonts.googleapis.com/css2?family=Aboreto&display=swap");
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #5064ff;
+  --fluid: clamp(1rem, 1rem + 3vw, 2rem);
+  font-size: round(down, var(--fluid), 2px);
+  font-family: "Aboreto", system-ui;
+  display: grid;
+  place-content: center;
+}
+
+.face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.eyes {
+  display: flex;
+  gap: 6px;
+  position: relative;
+}
+
+.eyes-center {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  inset: 0;
+  margin: auto;
+}
+
+.eye {
+  border-radius: 50%;
+  width: 4.5rem;
+  aspect-ratio: 1/1;
+  background-color: #ececec;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.eyeball {
+  width: 1.5rem;
+  aspect-ratio: 1/1;
+  background-color: #222;
+  border-radius: 50%;
+  translate: 100% 0;
+  transition: rotate 0.05s ease-out;
+}
+
+.mouth {
+  width: 3rem;
+  height: 2rem;
+  border-bottom: 1rem solid #f97c7c;
+  border-radius: 50%;
+  rotate: -15deg;
+}
