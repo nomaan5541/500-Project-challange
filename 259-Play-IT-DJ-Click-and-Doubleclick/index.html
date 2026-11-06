@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Play it Dj, Click and Double Click | CodeTap</title>
+    <link rel="apple-touch-icon" href="https://codetap.org/assets/img/favicon.png">
+    <link rel="icon" type="image/png" href="https://codetap.org/assets/img/favicon.png">
+
+</head>
+
+<body>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+        <title>PRO DJ CONSOLE — FULLY INTERACTIVE</title>
+        <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Press+Start+2P&family=VT323&display=swap"
+            rel="stylesheet">
+        <style>
+            :root {
+                /* IDLE STATE */
+                --bg-color: #1a1a1a;
+                --deck-color: #2b2b2b;
+                --deck-surface: #1f1f1f;
+                --accent: #00e5ff;
+                --glow: 0px 0px 5px rgba(0, 229, 255, 0.5);
+                --screen-bg: #0f1515;
+                --text-color: #00e5ff;
+                --font-main: 'Audiowide', sans-serif;
+                --anim-speed: 4s;
+                --viz-height: 10%;
+            }
+
+            /* --- MODE STYLES --- */
+            body[data-mode="house"] {
+                --bg-color: #1a022b;
+                --accent: #ff00cc;
+                --glow: 0px 0px 20px #ff00cc;
+                --text-color: #ff00cc;
+                --viz-height: 60%;
+                --anim-speed: 1.8s;
+            }
+
+            body[data-mode="techno"] {
+                --bg-color: #000000;
+                --accent: #00ff00;
+                --glow: 0px 0px 15px #00ff00;
+                --text-color: #00ff00;
+                --font-main: 'Courier New', monospace;
+                --viz-height: 90%;
+                --anim-speed: 0.8s;
+            }
+
+            body[data-mode="dnb"] {
+                --bg-color: #1a0500;
+                --accent: #ffae00;
+                --glow: 0px 0px 25px #ff4800;
+                --text-color: #ffae00;
+                --viz-height: 100%;
+                --anim-speed: 0.5s;
+            }
+
+            body[data-mode="lofi"] {
+                --bg-color: #4a3b3b;
+                --accent: #e6b8a2;
+                --glow: 0px 0px 10px #e6b8a2;
+                --text-color: #ffedd6;
+                --font-main: 'VT323', monospace;
+                --viz-height: 40%;
+                --anim-speed: 4s;
+            }
+
+            body[data-mode="retro"] {
+                --bg-color: #120024;
+                --accent: #00ffff;
+                --glow: 2px 2px 0px #ff00ff;
+                --text-color: #00ffff;
+                --font-main: 'Press Start 2P', cursive;
+                --viz-height: 50%;
+                --anim-speed: 2s;
+            }
+
+            * {
+                box-sizing: border-box;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                user-select: none;
+                -webkit-user-drag: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            body {
+                margin: 0;
+                height: 100vh;
+                background: var(--bg-color);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+                font-family: var(--font-main);
+                position: relative;
+                touch-action: none;
+                /* Prevents scrolling on mobile */
+            }
+
+            /* CURSOR POINTERS */
+            .knob,
+            .pad,
+            .cue-btn,
+            .vol-fader-container,
+            .pitch-slider-container,
+            .crossfader-container,
+            .platter-wrapper {
+                cursor: pointer;
+                touch-action: none;
+                /* Critical for dragging */
+            }
+
+            .knob:active,
+            .vol-cap:active,
+            .pitch-handle:active,
+            .xfader-cap:active {
+                cursor: grabbing;
+            }
+
+            /* --- HEADER INFO --- */
+            .header-info {
+                position: absolute;
+                top: 5%;
+                left: 50%;
+                transform: translateX(-50%);
+                text-align: center;
+                z-index: 100;
+                width: 100%;
+                pointer-events: none;
+            }
+
+            .main-title {
+                font-size: 4rem;
+                margin: 0;
+                color: var(--text-color);
+                text-shadow: 0 0 20px var(--accent);
+                text-transform: uppercase;
+                letter-spacing: 5px;
+                animation: float-text 3s ease-in-out infinite;
+            }
+
+            .sub-title {
+                font-size: 1.5rem;
+                margin-top: 10px;
+                color: #fff;
+                opacity: 0.8;
+                background: rgba(0, 0, 0, 0.6);
+                display: inline-block;
+                padding: 5px 20px;
+                border-radius: 20px;
+                border: 1px solid var(--accent);
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            }
+
+            @keyframes float-text {
+
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+
+                50% {
+                    transform: translateY(-10px);
+                }
+            }
+
+            /* --- VISUALS --- */
+            .visuals-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                overflow: hidden;
+                perspective: 1000px;
+                pointer-events: none;
+            }
+
+            .grid-floor {
+                position: absolute;
+                bottom: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background-image: linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .3) 25%, transparent 26%, transparent 74%, rgba(255, 255, 255, .3) 75%, transparent 76%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .3) 25%, transparent 26%, transparent 74%, rgba(255, 255, 255, .3) 75%, transparent 76%, transparent);
+                background-size: 100px 100px;
+                transform: rotateX(85deg);
+                opacity: 0;
+                transition: opacity 1s;
+            }
+
+            body[data-mode="techno"] .grid-floor {
+                opacity: 0.4;
+                background-image: linear-gradient(var(--accent) 1px, transparent 1px), linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+                animation: grid-move 0.5s linear infinite;
+            }
+
+            body[data-mode="retro"] .grid-floor {
+                opacity: 0.6;
+                bottom: -60%;
+                background-image: linear-gradient(#ff00ff 2px, transparent 2px), linear-gradient(90deg, #ff00ff 2px, transparent 2px);
+                animation: grid-move 2s linear infinite;
+                filter: drop-shadow(0 0 5px #ff00ff);
+            }
+
+            .retro-sun {
+                position: absolute;
+                top: 10%;
+                width: 300px;
+                height: 300px;
+                border-radius: 50%;
+                background: linear-gradient(to bottom, #ffeb3b, #ff00ff);
+                left: 50%;
+                transform: translateX(-50%);
+                opacity: 0;
+                box-shadow: 0 0 40px #ff00ff;
+                clip-path: polygon(0% 0%, 100% 0%, 100% 10%, 0% 10%, 0% 15%, 100% 15%, 100% 25%, 0% 25%, 0% 30%, 100% 30%, 100% 45%, 0% 45%, 0% 55%, 100% 55%, 100% 70%, 0% 70%, 0% 80%, 100% 80%, 100% 100%, 0% 100%);
+            }
+
+            body[data-mode="retro"] .retro-sun {
+                opacity: 1;
+                transition: opacity 2s;
+            }
+
+            .house-ring {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 600px;
+                height: 600px;
+                border: 2px solid transparent;
+                border-radius: 50%;
+                transform-style: preserve-3d;
+                opacity: 0;
+            }
+
+            .house-ring::before,
+            .house-ring::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                border-radius: 50%;
+                border: 4px solid var(--accent);
+            }
+
+            .house-ring::before {
+                transform: rotateX(60deg) rotateY(20deg);
+            }
+
+            .house-ring::after {
+                transform: rotateX(-60deg) rotateY(-20deg);
+            }
+
+            body[data-mode="house"] .house-ring {
+                opacity: 0.4;
+                animation: spin-3d 8s linear infinite;
+            }
+
+            .starfield {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                perspective: 800px;
+                opacity: 0;
+            }
+
+            .star {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 4px;
+                height: 4px;
+                background: #fff;
+                border-radius: 50%;
+                box-shadow: 0 0 10px var(--accent);
+            }
+
+            body[data-mode="dnb"] .starfield {
+                opacity: 1;
+            }
+
+            .lofi-orb {
+                position: absolute;
+                border-radius: 50%;
+                filter: blur(40px);
+                opacity: 0;
+                background: var(--accent);
+            }
+
+            body[data-mode="lofi"] .lofi-orb {
+                opacity: 0.3;
+                animation: float-orb 10s ease-in-out infinite alternate;
+            }
+
+            /* --- DJ DECK LAYOUT --- */
+            .dj-deck {
+                width: 1100px;
+                height: 600px;
+                background: var(--deck-color);
+                border-radius: 20px;
+                padding: 30px;
+                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 2px 3px rgba(255, 255, 255, 0.1), inset 0 -5px 10px rgba(0, 0, 0, 0.5);
+                display: flex;
+                flex-direction: row;
+                align-items: stretch;
+                justify-content: space-between;
+                gap: 15px;
+                position: relative;
+                z-index: 10;
+                border-bottom: 15px solid #111;
+                transform: scale(0.9);
+                margin-top: 50px;
+            }
+
+            .deck-section {
+                flex: 1;
+                background: #181818;
+                border-radius: 10px;
+                border: 1px solid #333;
+                box-shadow: inset 0 0 20px #000;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-around;
+                padding: 20px;
+                position: relative;
+            }
+
+            .platter-wrapper {
+                width: 240px;
+                height: 240px;
+                background: #151515;
+                border-radius: 50%;
+                box-shadow: inset 0 0 10px #000, 0 5px 15px rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                border: 4px solid #222;
+                transition: transform 0.1s;
+            }
+
+            .platter-wrapper:active {
+                transform: scale(0.98);
+            }
+
+            .platter-wrapper::before {
+                content: '';
+                position: absolute;
+                top: -10px;
+                left: -10px;
+                right: -10px;
+                bottom: -10px;
+                border-radius: 50%;
+                border: 2px solid var(--accent);
+                opacity: 0.3;
+                box-shadow: var(--glow);
+            }
+
+            .vinyl {
+                width: 90%;
+                height: 90%;
+                border-radius: 50%;
+                background: repeating-radial-gradient(#111 0, #111 2px, #222 3px, #111 4px);
+                position: relative;
+                box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+                transform: rotate(0deg);
+                /* Managed by JS for scratching */
+            }
+
+            .vinyl-label {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 35%;
+                height: 35%;
+                background: var(--accent);
+                border-radius: 50%;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                font-weight: bold;
+                color: var(--bg-color);
+                text-align: center;
+                border: 4px solid #000;
+                pointer-events: none;
+            }
+
+            .vinyl::after {
+                content: '';
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                width: 8px;
+                height: 40px;
+                background: rgba(255, 255, 255, 0.8);
+                transform: translateX(-50%);
+                border-radius: 2px;
+            }
+
+            .pitch-slider-container {
+                position: absolute;
+                right: 20px;
+                top: 20%;
+                bottom: 20%;
+                width: 40px;
+                background: #111;
+                border-radius: 4px;
+                box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .pitch-track {
+                width: 4px;
+                height: 80%;
+                background: #000;
+                border-right: 1px solid #333;
+                position: relative;
+            }
+
+            .pitch-handle {
+                width: 30px;
+                height: 50px;
+                background: linear-gradient(to bottom, #333, #111);
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                border: 1px solid #444;
+                border-radius: 2px;
+                box-shadow: 0 4px 5px rgba(0, 0, 0, 0.5);
+                transition: top 0.05s;
+            }
+
+            .pitch-handle::after {
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 2px;
+                background: var(--accent);
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            .mixer-section {
+                flex: 1.5;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .screen {
+                background: var(--screen-bg);
+                height: 100px;
+                border-radius: 6px;
+                border: 4px solid #333;
+                box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9);
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .screen::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+                pointer-events: none;
+            }
+
+            .visualizer {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-between;
+                padding: 0 5px;
+                opacity: 0.6;
+                z-index: 1;
+            }
+
+            .bar {
+                width: 15%;
+                background: var(--accent);
+                height: 10%;
+                transition: height 0.05s ease;
+            }
+
+            .mixer-body {
+                background: var(--deck-surface);
+                flex: 1;
+                border-radius: 6px;
+                box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .eq-section {
+                display: flex;
+                gap: 30px;
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 20px;
+                border-bottom: 1px solid #333;
+                padding-bottom: 15px;
+            }
+
+            .channel-strip {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .knob-label {
+                font-size: 0.65rem;
+                color: #888;
+                font-family: sans-serif;
+                margin-bottom: -5px;
+                font-weight: bold;
+                letter-spacing: 1px;
+            }
+
+            .knob {
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(145deg, #3a3a3a, #222);
+                border-radius: 50%;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+                position: relative;
+                border: 2px solid #111;
+                transform: rotate(0deg);
+            }
+
+            .knob::after {
+                content: '';
+                position: absolute;
+                top: 2px;
+                left: 50%;
+                width: 3px;
+                height: 12px;
+                background: var(--accent);
+                transform: translateX(-50%);
+                border-radius: 2px;
+                box-shadow: 0 0 5px var(--accent);
+            }
+
+            .lower-mixer {
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+                align-items: flex-end;
+                height: 100%;
+            }
+
+            .vol-fader-container {
+                width: 40px;
+                height: 140px;
+                background: #111;
+                border-radius: 4px;
+                display: flex;
+                justify-content: center;
+                padding: 10px 0;
+                position: relative;
+                box-shadow: inset 0 2px 5px #000;
+            }
+
+            .vol-track {
+                width: 4px;
+                height: 100%;
+                background: #000;
+                border: 1px solid #333;
+            }
+
+            .vol-cap {
+                width: 30px;
+                height: 40px;
+                background: linear-gradient(to top, #444, #666);
+                position: absolute;
+                bottom: 85%;
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 2px;
+                border: 1px solid #000;
+                box-shadow: 0 4px 8px #000;
+                transition: bottom 0.05s;
+            }
+
+            .vol-cap::before {
+                content: '';
+                width: 100%;
+                height: 2px;
+                background: #fff;
+                position: absolute;
+                top: 50%;
+            }
+
+            .center-column {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .vu-container {
+                display: flex;
+                gap: 4px;
+                height: 100px;
+            }
+
+            .vu-strip {
+                width: 12px;
+                background: #000;
+                border-radius: 2px;
+                display: flex;
+                flex-direction: column-reverse;
+                gap: 1px;
+                padding: 1px;
+                overflow: hidden;
+            }
+
+            .led {
+                height: 8%;
+                width: 100%;
+                background: #222;
+            }
+
+            .vu-strip.active .led {
+                background: var(--accent);
+                box-shadow: 0 0 5px var(--accent);
+            }
+
+            .pads-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .pad {
+                width: 35px;
+                height: 35px;
+                background: #333;
+                border: 1px solid #444;
+                border-radius: 4px;
+                transition: background 0.05s, transform 0.05s;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            }
+
+            .pad.hit {
+                background: var(--accent);
+                box-shadow: 0 0 15px var(--accent);
+                transform: scale(0.9);
+            }
+
+            /* NEW: INSTRUMENT PRESETS CSS */
+            .inst-row {
+                display: flex;
+                gap: 5px;
+                margin-bottom: 5px;
+            }
+
+            .inst-btn-preset {
+                padding: 4px 8px;
+                background: #111;
+                border: 1px solid var(--accent);
+                color: var(--accent);
+                font-family: 'Audiowide';
+                font-size: 0.5rem;
+                border-radius: 3px;
+                cursor: pointer;
+                text-transform: uppercase;
+            }
+
+            .inst-btn-preset:active {
+                background: var(--accent);
+                color: #000;
+            }
+
+            .crossfader-container {
+                width: 100%;
+                height: 50px;
+                background: #111;
+                margin-top: 15px;
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                box-shadow: inset 0 2px 5px #000;
+            }
+
+            .xfader-track {
+                width: 80%;
+                height: 4px;
+                background: #000;
+                border-bottom: 1px solid #333;
+            }
+
+            .xfader-cap {
+                width: 40px;
+                height: 30px;
+                background: linear-gradient(to right, #444, #666);
+                position: absolute;
+                border: 1px solid #000;
+                box-shadow: 0 4px 5px #000;
+                transition: left 0.05s;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .xfader-cap::after {
+                content: '';
+                width: 2px;
+                height: 100%;
+                background: #fff;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .cue-btn {
+                width: 40px;
+                height: 30px;
+                background: #222;
+                border: 1px solid #444;
+                color: #666;
+                font-size: 0.6rem;
+                margin-bottom: 5px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: sans-serif;
+                font-weight: bold;
+                transition: all 0.1s;
+            }
+
+            .cue-btn.lit {
+                background: orange;
+                color: #000;
+                box-shadow: 0 0 10px orange;
+            }
+
+            .cue-btn:active {
+                transform: scale(0.95);
+            }
+
+            #playBtn {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                border: none;
+                background: radial-gradient(circle at 30% 30%, #444, #111);
+                color: #ccc;
+                font-family: inherit;
+                font-size: 0.8rem;
+                cursor: pointer;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), inset 0 2px 5px rgba(255, 255, 255, 0.2);
+                position: absolute;
+                bottom: 30px;
+                right: 30px;
+                z-index: 20;
+                outline: none;
+                font-weight: bold;
+            }
+
+            #playBtn:active {
+                transform: scale(0.95);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            }
+
+            #playBtn::before {
+                content: '';
+                position: absolute;
+                top: -5px;
+                left: -5px;
+                right: -5px;
+                bottom: -5px;
+                border-radius: 50%;
+                border: 2px solid var(--accent);
+                opacity: 0.5;
+                animation: pulse-ring 2s infinite;
+            }
+
+            /* ANIMATIONS */
+            @keyframes pulse-ring {
+                0% {
+                    transform: scale(1);
+                    opacity: 0.5;
+                }
+
+                100% {
+                    transform: scale(1.5);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes viz-move {
+                0% {
+                    height: 10%;
+                }
+
+                50% {
+                    height: var(--viz-height);
+                }
+
+                100% {
+                    height: 20%;
+                }
+            }
+
+            .active-deck .bar {
+                animation: viz-move 0.5s infinite ease-in-out alternate;
+            }
+
+            .active-deck .bar:nth-child(2) {
+                animation-delay: 0.1s;
+            }
+
+            .active-deck .bar:nth-child(4) {
+                animation-delay: 0.2s;
+            }
+
+            @keyframes grid-move {
+                0% {
+                    transform: rotateX(85deg) translateY(0);
+                }
+
+                100% {
+                    transform: rotateX(85deg) translateY(100px);
+                }
+            }
+
+            @keyframes spin-3d {
+                0% {
+                    transform: translate(-50%, -50%) rotateZ(0deg);
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) rotateZ(360deg);
+                }
+            }
+
+            @keyframes warp {
+                0% {
+                    transform: translateZ(0) scale(0.1);
+                    opacity: 0;
+                }
+
+                50% {
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translateZ(600px) scale(2);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes float-orb {
+                0% {
+                    transform: translate(0, 0) scale(1);
+                }
+
+                50% {
+                    transform: translate(50px, -50px) scale(1.2);
+                }
+
+                100% {
+                    transform: translate(-50px, 20px) scale(0.9);
+                }
+            }
+
+            @media (max-width: 1200px) {
+                .dj-deck {
+                    width: 95%;
+                    height: auto;
+                    flex-direction: column;
+                    transform: none;
+                    margin-top: 150px;
+                }
+
+                .mixer-section {
+                    width: 100%;
+                    order: -1;
+                }
+
+                .deck-section {
+                    width: 100%;
+                    flex-direction: row;
+                }
+            }
+        </style>
+    </head>
+
+    <body data-mode="idle">
+        <div class="visuals-container">
+            <div class="grid-floor"></div>
+            <div class="retro-sun"></div>
+            <div class="house-ring"></div>
+            <div class="starfield" id="starfield"></div>
+            <div class="lofi-orb" style="top: 20%; left: 20%; width: 200px; height: 200px; background: #ff9a9e;"></div>
+            <div class="lofi-orb"
+                style="bottom: 20%; right: 20%; width: 300px; height: 300px; background: #fad0c4; animation-delay: -2s;">
+            </div>
+        </div>
+        <div class="header-info">
+            <h1 class="main-title" id="mainTitle">PRESS START</h1>
+            <div class="sub-title" id="subTitle">READY TO MIX</div>
+        </div>
+
+        <!-- MAIN CONSOLE -->
+        <div class="dj-deck" id="deck">
+            <!-- LEFT DECK (A) -->
+            <div class="deck-section" id="deckA">
+                <div class="platter-wrapper" id="platterA">
+                    <div class="vinyl">
+                        <div class="vinyl-label">L</div>
+                    </div>
+                </div>
+                <div class="pitch-slider-container" id="pitchA">
+                    <div class="pitch-track">
+                        <div class="pitch-handle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MIXER -->
+            <div class="mixer-section">
+                <div class="screen">
+                    <div class="visualizer">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                </div>
+                <div class="mixer-body">
+                    <!-- EQ SECTION -->
+                    <div class="eq-section">
+                        <!-- STRIP A -->
+                        <div class="channel-strip" id="stripA">
+                            <div class="knob-label">HI</div>
+                            <div class="knob" data-param="high"></div>
+                            <div class="knob-label">MID</div>
+                            <div class="knob" data-param="mid"></div>
+                            <div class="knob-label">LOW</div>
+                            <div class="knob" data-param="low"></div>
+                        </div>
+                        <!-- STRIP B -->
+                        <div class="channel-strip" id="stripB">
+                            <div class="knob-label">HI</div>
+                            <div class="knob" data-param="high"></div>
+                            <div class="knob-label">MID</div>
+                            <div class="knob" data-param="mid"></div>
+                            <div class="knob-label">LOW</div>
+                            <div class="knob" data-param="low"></div>
+                        </div>
+                    </div>
+
+                    <div class="lower-mixer">
+                        <!-- FADER A -->
+                        <div style="display:flex; flex-direction:column; align-items:center;">
+                            <div class="cue-btn" onclick="toggleCue(this)">CUE</div>
+                            <div class="vol-fader-container" id="volA">
+                                <div class="vol-track"></div>
+                                <div class="vol-cap"></div>
+                            </div>
+                        </div>
+
+                        <!-- VU & PADS -->
+                        <div class="center-column">
+                            <div class="vu-container">
+                                <div class="vu-strip active" id="vuL">
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                </div>
+                                <div class="vu-strip active" id="vuR">
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                    <div class="led"></div>
+                                </div>
+                            </div>
+
+                            <!-- NEW: INSTRUMENT PRESETS BUTTONS -->
+                            <div class="inst-row">
+                                <button class="inst-btn-preset" onmousedown="playInstrument('piano')">Piano</button>
+                                <button class="inst-btn-preset" onmousedown="playInstrument('sax')">Sax</button>
+                                <button class="inst-btn-preset" onmousedown="playInstrument('organ')">Organ</button>
+                            </div>
+
+                            <div class="pads-grid">
+                                <div class="pad" onmousedown="playSound('kick', this)"
+                                    ontouchstart="playSound('kick', this)"></div>
+                                <div class="pad" onmousedown="playSound('snare', this)"
+                                    ontouchstart="playSound('snare', this)"></div>
+                                <div class="pad" onmousedown="playSound('hat', this)"
+                                    ontouchstart="playSound('hat', this)"></div>
+                                <div class="pad" onmousedown="playSound('fx', this)"
+                                    ontouchstart="playSound('fx', this)"></div>
+                            </div>
+                        </div>
+
+                        <!-- FADER B -->
+                        <div style="display:flex; flex-direction:column; align-items:center;">
+                            <div class="cue-btn" onclick="toggleCue(this)">CUE</div>
+                            <div class="vol-fader-container" id="volB">
+                                <div class="vol-track"></div>
+                                <div class="vol-cap"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="crossfader-container" id="xfader">
+                        <div class="xfader-track"></div>
+                        <div class="xfader-cap"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT DECK (B) -->
+            <div class="deck-section" id="deckB">
+                <div class="platter-wrapper" id="platterB">
+                    <div class="vinyl">
+                        <div class="vinyl-label">R</div>
+                    </div>
+                </div>
+                <div class="pitch-slider-container" id="pitchB">
+                    <div class="pitch-track">
+                        <div class="pitch-handle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="playBtn">START</button>
+        </div>
+        <script>
+            // --- AUDIO ENGINE CORE ---
+            let ctx;
+            let masterGain;
+            let decks = { A: null, B: null };
+            let isStarted = false;
+
+            class Deck {
+                constructor(id) {
+                    this.id = id;
+                    this.buffer = null;
+                    this.source = null;
+                    this.playing = false;
+
+                    // Audio Graph: Source -> EQ -> Vol -> XFade
+                    this.highEQ = ctx.createBiquadFilter(); this.highEQ.type = 'highshelf'; this.highEQ.frequency.value = 3000;
+                    this.midEQ = ctx.createBiquadFilter(); this.midEQ.type = 'peaking'; this.midEQ.frequency.value = 1000;
+                    this.lowEQ = ctx.createBiquadFilter(); this.lowEQ.type = 'lowshelf'; this.lowEQ.frequency.value = 300;
+                    this.vol = ctx.createGain(); this.vol.gain.value = 0.8;
+                    this.xFadeGain = ctx.createGain(); this.xFadeGain.gain.value = 1;
+
+                    // Connect Chain
+                    this.lowEQ.connect(this.midEQ);
+                    this.midEQ.connect(this.highEQ);
+                    this.highEQ.connect(this.vol);
+                    this.vol.connect(this.xFadeGain);
+                    this.xFadeGain.connect(masterGain);
+
+                    // State
+                    this.baseRate = 1.0;
+                    this.pitchMod = 0;
+                    this.scratchRate = 0;
+                    this.isScratching = false;
+                    this.rotation = 0;
+                }
+
+                loadBuffer(buffer) {
+                    this.buffer = buffer;
+                    if (this.playing) this.start();
+                }
+
+                start() {
+                    if (this.source) { try { this.source.stop(); } catch (e) { } }
+                    this.source = ctx.createBufferSource();
+                    this.source.buffer = this.buffer;
+                    this.source.loop = true;
+                    this.source.connect(this.lowEQ);
+                    this.playing = true;
+                    this.updateRate();
+                    this.source.start(0);
+                }
+
+                updateRate() {
+                    if (!this.source) return;
+                    let rate = this.baseRate + this.pitchMod;
+                    if (this.isScratching) rate = this.scratchRate;
+                    if (Math.abs(rate) < 0.01) rate = 0.01; // Prevent 0 rate errors
+                    this.source.playbackRate.setTargetAtTime(rate, ctx.currentTime, 0.05);
+                }
+            }
+
+            // --- NEW: INSTRUMENT PRESETS LOGIC ---
+            function playInstrument(type) {
+                if (!ctx) return;
+                const t = ctx.currentTime;
+                const g = ctx.createGain();
+                const osc = ctx.createOscillator();
+                const filter = ctx.createBiquadFilter();
+
+                g.connect(masterGain);
+                osc.connect(filter);
+                filter.connect(g);
+
+                if (type === 'piano') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, t); // A4 note
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(2000, t);
+                    filter.frequency.exponentialRampToValueAtTime(100, t + 0.8);
+                    g.gain.setValueAtTime(0.6, t);
+                    g.gain.exponentialRampToValueAtTime(0.01, t + 1.0);
+                    osc.start(t); osc.stop(t + 1);
+                }
+                else if (type === 'sax') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(330, t); // E4 note
+                    // Add Vibrato (Sax character)
+                    const lfo = ctx.createOscillator();
+                    const lfoGain = ctx.createGain();
+                    lfo.frequency.value = 5;
+                    lfoGain.gain.value = 10;
+                    lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+                    lfo.start(t);
+                    filter.type = 'bandpass'; filter.frequency.value = 800;
+                    g.gain.setValueAtTime(0, t);
+                    g.gain.linearRampToValueAtTime(0.4, t + 0.1);
+                    g.gain.linearRampToValueAtTime(0, t + 0.5);
+                    osc.start(t); osc.stop(t + 0.5); lfo.stop(t + 0.5);
+                }
+                else if (type === 'organ') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(261, t); // C4 note
+                    filter.type = 'lowpass'; filter.frequency.value = 1200;
+                    g.gain.setValueAtTime(0.3, t);
+                    g.gain.exponentialRampToValueAtTime(0.01, t + 1.2);
+                    osc.start(t); osc.stop(t + 1.2);
+                }
+            }
+
+            // --- BUFFER GENERATORS ---
+            function createBuffer(genre) {
+                const sampleRate = ctx.sampleRate;
+                let bpm = 128;
+                if (genre === 'dnb') bpm = 174;
+                if (genre === 'techno') bpm = 140;
+                if (genre === 'lofi') bpm = 80;
+                if (genre === 'retro') bpm = 110;
+
+                const beatLen = sampleRate * (60 / bpm);
+                const bars = 4;
+                const length = Math.floor(beatLen * 4 * bars);
+                const buffer = ctx.createBuffer(2, length, sampleRate);
+                const L = buffer.getChannelData(0);
+                const R = buffer.getChannelData(1);
+
+                for (let i = 0; i < length; i++) {
+                    const t = i / sampleRate;
+                    const pos = i % Math.floor(beatLen);
+                    let out = 0;
+
+                    // Bass Kick (Procedural)
+                    if (pos < 8000) {
+                        let f = 120 * Math.exp(-pos / 2500);
+                        out += Math.sin(f * (pos / sampleRate) * Math.PI * 2) * 0.6;
+                    }
+
+                    // Mode Logic
+                    if (genre === 'house') {
+                        if (pos > beatLen / 2 && pos < (beatLen / 2) + 2000) out += (Math.random() - 0.5) * 0.2;
+                    } else if (genre === 'retro') {
+                        let note = Math.floor(t * 4) % 4;
+                        let freq = [220, 261, 293, 329][note];
+                        out += (Math.sin(t * freq * Math.PI * 2) > 0 ? 0.05 : -0.05);
+                    } else if (genre === 'techno') {
+                        if (i % Math.floor(beatLen / 4) < 1000) out += (Math.random() - 0.5) * 0.15;
+                    }
+
+                    L[i] = out; R[i] = out;
+                }
+                return buffer;
+            }
+
+            // --- INITIALIZATION ---
+            const startBtn = document.getElementById('playBtn');
+            const modes = [
+                { id: 'house', name: 'HOUSE', bpm: 128 },
+                { id: 'techno', name: 'TECHNO', bpm: 140 },
+                { id: 'dnb', name: 'D&B', bpm: 174 },
+                { id: 'lofi', name: 'LO-FI', bpm: 80 },
+                { id: 'retro', name: 'RETRO', bpm: 110 }
+            ];
+            let modeIdx = -1;
+
+            startBtn.addEventListener('click', () => {
+                if (!ctx) {
+                    ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    masterGain = ctx.createGain();
+                    masterGain.connect(ctx.destination);
+                    decks.A = new Deck('A');
+                    decks.B = new Deck('B');
+                    requestAnimationFrame(animateDeck);
+                }
+                if (ctx.state === 'suspended') ctx.resume();
+
+                modeIdx = (modeIdx + 1) % modes.length;
+                const m = modes[modeIdx];
+
+                document.body.dataset.mode = m.id;
+                document.getElementById('mainTitle').innerText = m.name;
+                document.getElementById('subTitle').innerText = `BPM: ${m.bpm}`;
+                startBtn.innerText = "SWITCH";
+
+                const buff = createBuffer(m.id);
+                decks.A.loadBuffer(buff);
+                decks.B.loadBuffer(buff);
+
+                if (!decks.A.playing) decks.A.start();
+                if (!decks.B.playing) decks.B.start();
+            });
+            document.querySelectorAll('.knob').forEach(knob => {
+                const strip = knob.parentElement;
+                const deckId = strip.id === 'stripA' ? 'A' : 'B';
+                const param = knob.dataset.param;
+                let rotation = 0; // Degrees
+
+                const updateKnobValue = (deg) => {
+                    rotation = Math.max(-135, Math.min(135, deg));
+                    knob.style.transform = `rotate(${rotation}deg) scale(1.1)`;
+                    knob.style.boxShadow = `0 0 15px var(--accent)`;
+
+                    const dbValue = (rotation / 135) * 15; // Map -135/135deg to -15/+15dB
+                    if (decks[deckId]) {
+                        const eqNode = param === 'high' ? decks[deckId].highEQ :
+                            param === 'mid' ? decks[deckId].midEQ :
+                                decks[deckId].lowEQ;
+                        eqNode.gain.setTargetAtTime(dbValue, ctx.currentTime, 0.05);
+                    }
+                };
+
+                // 1. Double Click to Reset
+                knob.addEventListener('dblclick', () => {
+                    // playKnobClick(); // Note: Original code referenced this but it wasn't defined. Removed to prevent errors.
+                    updateKnobValue(0);
+                    setTimeout(() => {
+                        knob.style.transform = `rotate(0deg) scale(1)`;
+                        knob.style.boxShadow = `0 5px 10px rgba(0,0,0,0.4)`;
+                    }, 150);
+                });
+
+                // 2. Drag Logic
+                knob.addEventListener('mousedown', e => {
+                    if (!ctx) return;
+                    let startY = e.clientY;
+                    knob.style.transition = 'none'; // Snappy dragging
+
+                    const onMouseMove = (ev) => {
+                        const dy = ev.clientY - startY;
+                        updateKnobValue(rotation - dy); // Vertical drag rotates knob
+                        startY = ev.clientY;
+                    };
+
+                    const onMouseUp = () => {
+                        window.removeEventListener('mousemove', onMouseMove);
+                        knob.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                        knob.style.transform = `rotate(${rotation}deg) scale(1)`;
+                        knob.style.boxShadow = `0 5px 10px rgba(0,0,0,0.4)`;
+                    };
+
+                    window.addEventListener('mousemove', onMouseMove);
+                    window.addEventListener('mouseup', onMouseUp, { once: true });
+                });
+            });
+            // --- PAD SOUNDS ---
+            function playSound(type, el) {
+                if (!ctx) return;
+                const t = ctx.currentTime;
+                const g = ctx.createGain();
+                g.connect(masterGain);
+                const mode = document.body.dataset.mode;
+
+                if (el) {
+                    el.classList.add('hit');
+                    setTimeout(() => el.classList.remove('hit'), 100);
+                }
+
+                if (type === 'kick') {
+                    const osc = ctx.createOscillator();
+                    osc.frequency.setValueAtTime(mode === 'techno' ? 80 : 150, t);
+                    osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.5);
+                    g.gain.setValueAtTime(1, t);
+                    g.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+                    osc.connect(g); osc.start(t); osc.stop(t + 0.5);
+                }
+                else if (type === 'snare') {
+                    const b = ctx.createBuffer(1, ctx.sampleRate * 0.2, ctx.sampleRate);
+                    const d = b.getChannelData(0);
+                    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+                    const src = ctx.createBufferSource(); src.buffer = b;
+                    const filter = ctx.createBiquadFilter(); filter.type = 'highpass'; filter.frequency.value = 1000;
+                    src.connect(filter); filter.connect(g);
+                    g.gain.setValueAtTime(0.4, t);
+                    g.gain.linearRampToValueAtTime(0, t + 0.2);
+                    src.start(t);
+                }
+                else if (type === 'hat') {
+                    const b = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+                    const d = b.getChannelData(0);
+                    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+                    const src = ctx.createBufferSource(); src.buffer = b;
+                    const filter = ctx.createBiquadFilter(); filter.type = 'highpass'; filter.frequency.value = 5000;
+                    src.connect(filter); filter.connect(g);
+                    g.gain.setValueAtTime(0.2, t);
+                    g.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+                    src.start(t);
+                }
+                else if (type === 'fx') {
+                    const osc = ctx.createOscillator();
+                    if (mode === 'retro') {
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(987, t);
+                        osc.frequency.setValueAtTime(1318, t + 0.1);
+                    } else {
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(800, t);
+                        osc.frequency.linearRampToValueAtTime(100, t + 0.4);
+                    }
+                    g.gain.setValueAtTime(0.2, t);
+                    g.gain.linearRampToValueAtTime(0, t + 0.4);
+                    osc.connect(g); osc.start(t); osc.stop(t + 0.4);
+                }
+            }
+
+            // --- INTERACTION HANDLERS ---
+            function setupPitch(deckId) {
+                const container = document.getElementById(`pitch${deckId}`);
+                const handle = container.querySelector('.pitch-handle');
+                const update = (y) => {
+                    const rect = container.getBoundingClientRect();
+                    let pct = (y - rect.top) / rect.height;
+                    pct = Math.max(0.1, Math.min(0.9, pct));
+                    handle.style.top = (pct * 100) + '%';
+                    const mod = (0.5 - pct) * 0.4;
+                    if (decks[deckId]) {
+                        decks[deckId].pitchMod = mod;
+                        decks[deckId].updateRate();
+                    }
+                };
+                container.addEventListener('mousedown', e => {
+                    const move = (ev) => update(ev.clientY);
+                    window.addEventListener('mousemove', move);
+                    window.addEventListener('mouseup', () => window.removeEventListener('mousemove', move), { once: true });
+                    update(e.clientY);
+                });
+                container.addEventListener('touchstart', e => {
+                    update(e.touches[0].clientY);
+                }, { passive: false });
+            }
+            setupPitch('A'); setupPitch('B');
+
+            function setupScratch(deckId) {
+                const pad = document.getElementById(`platter${deckId}`);
+                let lastY = 0, lastTime = 0;
+                const start = (y) => {
+                    if (!decks[deckId]) return;
+                    decks[deckId].isScratching = true;
+                    lastY = y; lastTime = ctx.currentTime;
+                };
+                const move = (y) => {
+                    if (!decks[deckId] || !decks[deckId].isScratching) return;
+                    const now = ctx.currentTime, dt = now - lastTime, dy = y - lastY;
+                    if (dt > 0) {
+                        decks[deckId].scratchRate = (dy / dt) * -0.005;
+                        decks[deckId].updateRate();
+                    }
+                    lastY = y; lastTime = now;
+                };
+                const end = () => {
+                    if (!decks[deckId]) return;
+                    decks[deckId].isScratching = false;
+                    decks[deckId].updateRate();
+                };
+                pad.addEventListener('mousedown', e => {
+                    start(e.clientY);
+                    const m = ev => move(ev.clientY);
+                    const u = () => { window.removeEventListener('mousemove', m); end(); };
+                    window.addEventListener('mousemove', m);
+                    window.addEventListener('mouseup', u, { once: true });
+                });
+                pad.addEventListener('touchstart', e => {
+                    start(e.touches[0].clientY);
+                }, { passive: false });
+            }
+            setupScratch('A'); setupScratch('B');
+
+            const xContainer = document.getElementById('xfader');
+            const xCap = xContainer.querySelector('.xfader-cap');
+            function updateXFade(x) {
+                const rect = xContainer.getBoundingClientRect();
+                let pct = (x - rect.left) / rect.width;
+                pct = Math.max(0, Math.min(1, pct));
+                xCap.style.left = (pct * 90) + '%';
+                if (decks.A && decks.B) {
+                    decks.A.xFadeGain.gain.setTargetAtTime(Math.cos(pct * 0.5 * Math.PI), ctx.currentTime, 0.05);
+                    decks.B.xFadeGain.gain.setTargetAtTime(Math.cos((1 - pct) * 0.5 * Math.PI), ctx.currentTime, 0.05);
+                }
+            }
+            xContainer.addEventListener('mousedown', e => {
+                const m = ev => updateXFade(ev.clientX);
+                window.addEventListener('mousemove', m);
+                window.addEventListener('mouseup', () => window.removeEventListener('mousemove', m), { once: true });
+                updateXFade(e.clientX);
+            });
+
+            ['A', 'B'].forEach(id => {
+                const con = document.getElementById(`vol${id}`);
+                const cap = con.querySelector('.vol-cap');
+                const update = (y) => {
+                    const rect = con.getBoundingClientRect();
+                    let pct = (rect.bottom - y) / rect.height;
+                    pct = Math.max(0, Math.min(0.85, pct));
+                    cap.style.bottom = (pct * 100) + '%';
+                    if (decks[id]) decks[id].vol.gain.setTargetAtTime(pct * 1.2, ctx.currentTime, 0.05);
+                }
+                con.addEventListener('mousedown', e => {
+                    const m = ev => update(ev.clientY);
+                    window.addEventListener('mousemove', m);
+                    window.addEventListener('mouseup', () => window.removeEventListener('mousemove', m), { once: true });
+                    update(e.clientY);
+                });
+            });
+
+            function toggleCue(btn) { btn.classList.toggle('lit'); }
+
+            // --- ANIMATION ---
+            function animateDeck() {
+                ['A', 'B'].forEach(id => {
+                    if (decks[id]) {
+                        const vinyl = document.querySelector(`#platter${id} .vinyl`);
+                        let rate = decks[id].isScratching ? decks[id].scratchRate * 20 : (decks[id].baseRate + decks[id].pitchMod);
+                        decks[id].rotation += rate * 2;
+                        vinyl.style.transform = `rotate(${decks[id].rotation}deg)`;
+                    }
+                });
+
+                document.querySelectorAll('.vu-strip').forEach(strip => {
+                    const leds = strip.children;
+                    const intensity = Math.floor(Math.random() * 8);
+                    for (let i = 0; i < 7; i++) {
+                        leds[i].style.backgroundColor = i < intensity ? 'var(--accent)' : '#222';
+                        leds[i].style.boxShadow = i < intensity ? '0 0 5px var(--accent)' : 'none';
+                    }
+                });
+                requestAnimationFrame(animateDeck);
+            }
+
+            // Starfield setup
+            const sf = document.getElementById('starfield');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div'); star.className = 'star';
+                star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%';
+                star.style.animation = `warp ${Math.random() * 0.5 + 0.2}s linear infinite`;
+                sf.appendChild(star);
+            }
+        </script>
+    </body>
+
+    </html>
+
+</body>
+
+</html>
