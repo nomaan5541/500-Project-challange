@@ -1,0 +1,109 @@
+body {
+    background: #0a0a0a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+}
+
+.unselectable {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #000;
+    border: 1px solid #0f0;
+    padding: 30px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.terminal-btn {
+    background: #0f0;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.terminal-btn:hover {
+    background: #000 !important;
+    color: #0f0 !important;
+    outline: 1px solid #0f0;
+    box-shadow: 0 0 10px #0f0;
+}
+
+#game-container, #pong-area {
+    position: relative;
+    width: 800px;
+    height: 450px;
+    background: #000;
+    overflow: hidden;
+    border: 1px solid #0f0;
+}
+
+#pong-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+}
+
+.base-layer { position: absolute; inset: 0; background-image: radial-gradient(#053305 1px, transparent 1px); background-size: 15px 15px; }
+.revealer { position: absolute; inset: 0; z-index: 5; pointer-events: none; clip-path: circle(0px at 0px 0px); }
+.char { position: absolute; font-size: 100px; font-weight: 900; color: #0f0; text-shadow: 0 0 15px #0f0; }
+
+.lens {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    z-index: 10;
+    cursor: grab;
+    border: 1px solid rgba(0, 255, 0, 0.4);
+}
+
+.red { background: rgba(255, 0, 0, 0.15); top: 20px; left: 20px; }
+.green { background: rgba(0, 255, 0, 0.15); top: 20px; left: 180px; }
+.blue { background: rgba(0, 255, 0, 0.15); top: 20px; left: 340px; }
+
+#console-ui { width: 802px; background: #000; border: 1px solid #0f0; border-top: none; }
+.console-header { background: #032b03; color: #0f0; padding: 5px 10px; font-size: 12px; border: 1px solid #0f0; border-bottom: none; }
+.console-body { padding: 20px; display: flex; align-items: center; gap: 10px; }
+
+input {
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-size: 24px;
+    font-family: 'Courier New', monospace;
+    outline: none;
+    width: 150px;
+    text-transform: uppercase;
+}
+
+#status-line { padding: 0 20px 15px 20px; font-size: 14px; height: 20px; }
+.error-state { color: #f00 !important; }
+.error-flash-bg { animation: smoothRed 0.4s ease-in-out; }
+@keyframes smoothRed { 0%, 100% { background: #000; } 50% { background: #300; } }
