@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Terminal Access Design | CodeTap</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="apple-touch-icon" href="https://codetap.org/assets/img/favicon.png">
+    <link rel="icon" type="image/png" href="https://codetap.org/assets/img/favicon.png">
+</head>
+
+<body>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Secure Terminal Access</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <div id="intro-modal" class="modal">
+            <div class="modal-content unselectable">
+                <h3>SYSTEM_MESSAGE</h3>
+                <p>Accessing the main server requires a 6-digit decryption key.</p>
+                <p>Use the <strong>RGB Optical Lenses</strong> to reveal hidden characters.</p>
+                <button id="init-btn" class="terminal-btn">INITIALIZE</button>
+            </div>
+        </div>
+
+        <div id="game-wrap">
+            <div id="main-interface">
+                <div id="game-container" class="unselectable">
+                    <div class="base-layer"></div>
+                    <div class="revealer" id="reveal-red"><span class="char" style="left:15%; top:25%">7</span><span
+                            class="char" style="left:60%; top:70%">9</span></div>
+                    <div class="revealer" id="reveal-green"><span class="char" style="left:40%; top:50%">4</span><span
+                            class="char" style="left:75%; top:15%">2</span></div>
+                    <div class="revealer" id="reveal-blue"><span class="char" style="left:70%; top:40%">B</span><span
+                            class="char" style="left:85%; top:75%">X</span></div>
+
+                    <div class="lens red" id="red"></div>
+                    <div class="lens green" id="green"></div>
+                    <div class="lens blue" id="blue"></div>
+                </div>
+
+                <div id="console-ui">
+                    <div class="console-header unselectable">SYSTEM_SECURITY_V4.0</div>
+                    <div class="console-body">
+                        <span class="prompt unselectable">></span>
+                        <input type="text" id="guess" maxlength="6" autocomplete="off" placeholder="______" autofocus>
+                        <button id="submit" class="terminal-btn">EXECUTE</button>
+                    </div>
+                    <div id="status-line" class="unselectable">READY_</div>
+                </div>
+            </div>
+
+            <div id="pong-container" style="display: none;" class="unselectable">
+                <div class="console-header">
+                    HIDDEN_ARCHIVE_RECOVERED: PONG.EXE |
+                    VOLLEY_STREAK: <span id="score">0</span> |
+                    RECORD_STREAK: <span id="highscore">0</span>
+                </div>
+                <div id="pong-area">
+                    <div id="pong-overlay">
+                        <button id="pong-start-btn" class="terminal-btn">START_STREAK</button>
+                    </div>
+                    <canvas id="pong" width="800" height="450"></canvas>
+                </div>
+                <div id="status-line-pong" style="padding: 10px; font-size: 14px;">KEEP_THE_VOLLEY_ALIVE</div>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+
+    </html>
+    <script src="./script.js"></script>
+
+</body>
+
+</html>
