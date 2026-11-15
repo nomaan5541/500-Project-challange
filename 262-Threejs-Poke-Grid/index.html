@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>ThreeJS Poke Grid | CodeTap</title>
+	<link rel="apple-touch-icon" href="https://codetap.org/assets/img/favicon.png">
+	<link rel="icon" type="image/png" href="https://codetap.org/assets/img/favicon.png">
+
+</head>
+
+<body>
+	<script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+	<script>
+		AFRAME.registerComponent('fit-frustum', {
+			init: function () {
+
+				window.addEventListener('resize', () => this.fitToCamera());
+				this.fitToCamera();
+
+			},
+			fitToCamera: function () {
+
+				const el = this.el;
+				const sceneEl = el.sceneEl;
+				const camera = sceneEl.camera;
+
+				if (!camera) {
+					sceneEl.addEventListener('camera-set-active', () => this.fitToCamera());
+					return;
+				}
+
+				const distance = camera.el.object3D.position.y - el.object3D.position.y;
+
+				const vFov = (camera.fov * Math.PI) / 180;
+				const visibleHeight = 2 * Math.tan(vFov / 2) * distance;
+
+				const aspect = window.innerWidth / window.innerHeight;
+				const visibleWidth = visibleHeight * aspect;
+
+				el.setAttribute('width', visibleWidth);
+				el.setAttribute('height', visibleHeight);
+
+				console.log(`plane resized to: ${visibleWidth.toFixed(2)} x ${visibleHeight.toFixed(2)}`);
+
+			}
+		});
+		AFRAME.registerComponent('mouse-tracker', {
+			init: function () {
+
+				this.mouseWorldPos = new THREE.Vector3(0, 0, 0);
+
+			},
+			tick: function () {
+
+				const raycaster = this.el.components.raycaster;
+				if (raycaster && raycaster.intersections.length > 0) {
+					this.mouseWorldPos.copy(raycaster.intersections[0].point);
+				}
+
+			}
+		});
+		AFRAME.registerComponent('dynamic-pillar-grid', {
+			schema: {
+				width: { default: 1.5 },
+				depth: { default: 1.5 },
+				height: { default: 10 },
+				spacing: { default: 0.2 }
+			},
+			init: function () {
+
+				this.pillars = [];
+				window.addEventListener('resize', () => this.updateGrid());
+				setTimeout(() => this.updateGrid(), 100);
+
+			},
+			updateGrid: function () {
+
+				const frustumPlane = document.querySelector('[fit-frustum]');
+				if (!frustumPlane) return;
+
+				const vWidth = parseFloat(frustumPlane.getAttribute('width'));
+				const vHeight = parseFloat(frustumPlane.getAttribute('height'));
+
+				const colWidth = this.data.width + this.data.spacing;
+				const rowDepth = this.data.depth + this.data.spacing;
+
+				let cols = Math.floor(vWidth / colWidth) + 2;
+				if (cols % 2 === 0) cols++;
+
+				let rows = Math.floor(vHeight / rowDepth) + 2;
+				if (rows % 2 === 0) rows++;
+
+				const totalNeeded = cols * rows;
+
+				while (this.pillars.length > totalNeeded) {
+					const p = this.pillars.pop();
+					p.parentNode.removeChild(p);
+				}
+
+				while (this.pillars.length < totalNeeded) {
+					const p = document.createElement('a-box');
+					p.setAttribute('width', this.data.width);
+					p.setAttribute('depth', this.data.depth);
+					p.setAttribute('height', this.data.height);
+					p.setAttribute('color', '#808080');
+					p.setAttribute('metalness', 0.5);
+					p.setAttribute('roughness', 0.5);
+					p.setAttribute('distance-checker', '');
+					this.el.appendChild(p);
+					this.pillars.push(p);
+				}
+
+				const offsetX = (cols - 1) * colWidth / 2;
+				const offsetZ = (rows - 1) * rowDepth / 2;
+
+				for (let i = 0; i < this.pillars.length; i++) {
+
+					const r = Math.floor(i / cols);
+					const c = i % cols;
+
+					const x = (c * colWidth) - offsetX;
+					const z = (r * rowDepth) - offsetZ;
+
+					this.pillars[i].setAttribute('position', `${x} 0 ${z}`);
+
+				}
+
+			}
+		});
+		AFRAME.registerComponent('distance-checker', {
+			schema: {
+				radius: { default: 5 },
+				minElevation: { default: 0 },
+				maxElevation: { default: 5 }
+			},
+			init: function () {
+
+				const cameraEl = document.querySelector('[camera]');
+
+				if (cameraEl) this.tracker = cameraEl.components['mouse-tracker'];
+
+				this.myPos = this.el.object3D.position;
+				this.baseY = this.data.minElevation;
+
+			},
+			tick: function () {
+
+				if (!this.tracker || !this.tracker.mouseWorldPos) return;
+
+				const mousePos = this.tracker.mouseWorldPos;
+
+				const dx = mousePos.x - this.myPos.x;
+				const dz = mousePos.z - this.myPos.z;
+				const dist = Math.sqrt(dx * dx + dz * dz);
+
+				let influence = Math.max(0, 1 - (dist / this.data.radius));
+				influence = influence * influence;
+
+				const targetY = this.baseY - (influence * this.data.maxElevation);
+
+				this.myPos.y = THREE.MathUtils.lerp(this.myPos.y, targetY, 0.1);
+
+				if (influence > 0.01) { /**/ }
+
+			}
+		});
+	</script>
+	<a-scene xr-mode-ui="enabled: false">
+		<a-camera look-controls-enabled="false" wasd-controls-enabled="false" position="0 10 0" rotation="-90 0 0"
+			cursor="rayOrigin: mouse" raycaster="objects: .receive-ray" mouse-tracker></a-camera>
+		<a-plane class="receive-ray" position="0 5 0" rotation="-90 0 0" width="38.4" height="21.6" opacity="0.0"
+			color="#000000" fit-frustum></a-plane>
+		<a-entity dynamic-pillar-grid="width: 1.5; depth: 1.5; height: 10; spacing: 0.2"></a-entity>
+		<a-light position="0 11 0" type="point" intensity="5"></a-light>
+		<a-sky color="#000000"></a-sky>
+	</a-scene>
+
+</body>
+
+</html>
