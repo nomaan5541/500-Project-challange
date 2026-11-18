@@ -1,0 +1,204 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+:root {
+	--line-color: #6bd600;
+}
+
+* {
+	box-sizing: border-box;
+	position: absolute;
+	transform-style: preserve-3d;
+}
+
+*::before,
+*::after {
+	box-sizing: border-box;
+	transform-style: preserve-3d;
+	position: absolute;
+	content: "";
+	animation-play-state: paused !important;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	perspective: 50vmin;
+	background-size: 100vw 100vh;
+	background-image: radial-gradient(#0000, #673ab72e),
+		linear-gradient(-90deg, #2000587d, #000, #9c27b02b),
+		linear-gradient(0deg, #ff98002e, #000, #8bc34a5e);
+	background-color: #000;
+	box-shadow: 0 0 150vmin 11vmin #000 inset;
+	font-family: "Press Start 2P", system-ui;
+	font-size: 18px;
+}
+
+body:before {
+	width: 100vw;
+	height: 100vh;
+	background: radial-gradient(#0000, #0a123a),
+		linear-gradient(180deg, #2000587d, #000, #9c27b02b),
+		linear-gradient(0deg, #ff980054, #000, #009688ba);
+	opacity: 0.25;
+}
+
+.sides {
+	width: 100vw;
+	height: 100vh;
+	background: radial-gradient(#0f0015 10%, #000000e0 35%, #fff0 75% 100%);
+}
+
+.sides::before,
+.sides::after {
+	width: 100vw;
+	height: 100vh;
+	transform: rotateY(90deg);
+	transform-origin: left center;
+	background-image: repeating-linear-gradient( 90deg, #fff0 0vmin, #fff0 10vmin, var(--line-color) 10vmin 10.35vmin, #fff0 10.35vmin ),
+		repeating-linear-gradient( 180deg, #fff0 0vmin, #fff0 10vmin, var(--line-color) 10vmin 10.35vmin, #fff0 10.35vmin	);
+	background-color: #fff0;
+	animation: lines-x 0.5s linear 0s infinite, color 5s linear 0s infinite;
+	background-repeat: repeat;
+	background-position: center center;
+	background-size: 12vmin 12vmin;
+	box-shadow: 0 0 8vmin 10vmin #000 inset;
+}
+
+.lefrig:after {
+	transform: rotateY(-90deg);
+	transform-origin: right center;
+	animation: lines-x 0.5s linear 0s infinite reverse, color 5s linear 2s infinite;
+	z-index: -1;
+}
+
+.topbot:before {
+	height: 100vw;
+	transform: rotateX(90deg);
+	transform-origin: center bottom;
+	bottom: 0;
+	animation: lines-y 0.5s linear 0s infinite reverse, color 5s linear 1s infinite;
+}
+
+.topbot:after {
+	height: 100vw;
+	transform: rotateX(-90deg);
+	transform-origin: center top;
+	bottom: inherit;
+	animation: lines-y 0.5s linear 0s infinite, color 5s linear 3s infinite;
+}
+
+.button {
+	left: 50%;
+	top: 50%;
+	transgorm: translateX(-50%) translateY(-50%) translateZ(16vmin) scale(0.675);
+	background: #fff8;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	z-index: 5;
+}
+
+label {
+	display: block;
+	cursor: pointer;
+	width: 260px;
+	height: 54px;
+	background-color: #6bd60020;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	color: var(--line-color);
+	border: 2px solid var(--line-color);
+	transition: color 1s ease, border 1s ease, background-color 1s ease;
+}
+
+label:hover {
+	--line-color: #fff;
+	background-color: #ffffff30;
+	/*animation: color 5s linear infinite;*/
+	/*animation-play-state: running !important;*/
+}
+
+input {
+	display: none;
+}
+
+body:has(input:checked) *::before,
+body:has(input:checked) *::after,
+body:has(input:checked)::before,
+body:has(input:checked)::after {
+	animation-play-state: running !important;
+}
+
+body:has(input:checked) .button {
+	display: none;
+}
+
+.stars {
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	z-index: 3;
+}
+
+.stars::before,
+.stars::after {
+	width: 200vw;
+	height: 200vh;
+	content: "";
+	background: #fff0;
+	border-radius: 100%;
+	background-image: repeating-conic-gradient( #fff8 0%, transparent 0.0002%, transparent 0.075%, transparent 0.65% ),
+		repeating-conic-gradient( #fff 0%, transparent 0.0004%, transparent 0.05%, transparent 0.495%	);
+	transform: translateZ(-40vmin);
+	opacity: 0;
+	animation: stars 4s ease-in -1s infinite;
+	z-index: 1;
+	left: -50vw;
+	top: -50vh;
+}
+
+.stars::after {
+	animation-name: stars2;
+	animation-delay: -2s;
+}
+
+.stars + .stars::before {
+	animation-delay: -3s;
+}
+
+.stars + .stars::after {
+	animation-delay: -4s;
+}
+
+@keyframes color {
+	  0% { filter: hue-rotate(1deg); }
+	100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes lines-x {
+	  0% { background-position: 12vmin center; }
+	100% { background-position: 0 center; }
+}
+
+@keyframes lines-y {
+	  0% { background-position: center 12vmin; }
+	100% { background-position: center 0; }
+}
+
+@keyframes stars {
+	      0% { transform: translateZ(-40vmin); opacity: 0; }
+	30%, 80% { opacity: 1; }
+	    100% { transform: translateZ(50vmin) rotate(15deg);	opacity: 0;	}
+}
+
+@keyframes stars2 {
+	      0% { transform: translateZ(-40vmin) rotate(180deg);	opacity: 0;	}
+	30%, 80% { opacity: 1; }
+	    100% { transform: translateZ(50vmin) rotate(195deg); opacity: 0; }
+}
