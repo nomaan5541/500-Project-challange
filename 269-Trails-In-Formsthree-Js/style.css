@@ -1,0 +1,10 @@
+body { margin: 0; overflow: hidden; background-color: #141414; }
+        canvas { display: block; }
+        .lil-gui.root {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            top: auto !important;
+            --background-color: #1a1a1a;
+            --text-color: #eee;
+        }
