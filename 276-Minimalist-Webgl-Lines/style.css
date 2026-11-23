@@ -1,0 +1,137 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-style: normal;
+}
+html {
+  --color-bg: #121211;
+  --color-text: #f9f9f7;
+  --color-muted: #bdbdbd;
+  --u-thickness: 1.1px;
+  --u-spacing: 0.4rem;
+  --u-offset: 0.2rem;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+body {
+  background: var(--color-bg);
+  font: 14px/1.45 "Lucida Console", "Monaco", monospace;
+  letter-spacing: 0.01em;
+  height: 100svh;
+  overflow: hidden;
+}
+body,
+a {
+  color: var(--color-text);
+}
+::selection {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.ct {
+  margin: 0 auto;
+  padding: 0.6em 1.6em;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.ct > * {
+  margin: 1rem 0 0;
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1em;
+  z-index: -1;
+}
+
+a::after {
+  content: "";
+  position: absolute;
+  bottom: calc(-1.1 * var(--u-offset));
+  left: 0;
+  right: 0;
+  height: var(--u-thickness);
+  background: repeating-linear-gradient(
+    to right,
+    var(--color-muted) 0,
+    var(--color-muted) 2px,
+    transparent 2px,
+    transparent var(--u-spacing)
+  );
+  transition: background 0.3s ease-out;
+  opacity: 0.75;
+}
+a:hover::after {
+  background: var(--color-muted);
+  height: calc(var(--u-thickness) * 0.5);
+}
+a:focus,
+a:hover {
+  text-decoration: none;
+}
+header {
+  margin-bottom: 1.5em;
+}
+footer {
+  padding: 1em 0;
+}
+sup,
+small {
+  color: var(--color-muted);
+  font-size: 0.8em;
+}
+sup {
+  font-size: 0.7em;
+}
+small {
+  display: block;
+  margin-top: 1.5em;
+  text-align: center;
+}
+/* sr-only */
+.so {
+  position: absolute;
+  display: block;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#gl {
+  display: block;
+
+  width: 100%;
+  max-width: 26rem;
+  margin: 0 auto;
+  aspect-ratio: 500 / 300;
+  background: none;
+  border: none;
+  position: relative;
+  z-index: -1;
+  cursor: pointer;
+}
+/* on gl clicking cursor to pointer down */
+#gl:active {
+  cursor: pointer;
+}
