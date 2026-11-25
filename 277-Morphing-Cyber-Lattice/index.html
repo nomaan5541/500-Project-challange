@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Morphing Cyber Lattice | CodeTap</title>
+    <link rel="apple-touch-icon" href="https://codetap.org/assets/img/favicon.png">
+    <link rel="icon" type="image/png" href="https://codetap.org/assets/img/favicon.png">
+
+
+</head>
+
+<body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Structural Geometry</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;500&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050508;
+            font-family: 'Rajdhani', sans-serif;
+            user-select: none;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hud-panel {
+            background: rgba(10, 15, 20, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 0, 85, 0.2);
+            border-left: 3px solid #ff0055;
+            padding: 15px;
+            max-width: 280px;
+            color: #fff;
+            position: relative;
+            transform: skewX(-5deg);
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #fff, #ff0055);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+        }
+
+        .subtitle {
+            font-size: 0.8em;
+            color: #ff88aa;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+            border-bottom: 1px solid rgba(255, 0, 85, 0.2);
+            padding-bottom: 5px;
+        }
+
+        .description {
+            font-size: 0.85em;
+            line-height: 1.4;
+            color: #dddddd;
+            font-weight: 300;
+        }
+
+        .controls {
+            pointer-events: auto;
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        button {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #ff0055;
+            color: #ff0055;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            padding: 10px 25px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
+        }
+
+        button:hover {
+            background: #ff0055;
+            color: #fff;
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.6);
+        }
+
+        button:disabled {
+            border-color: #555;
+            color: #555;
+            cursor: not-allowed;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: none;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Orbitron', sans-serif;
+            color: #ff0055;
+            letter-spacing: 5px;
+            font-size: 1.2em;
+            text-shadow: 0 0 20px #ff0055;
+            z-index: 100;
+            transition: opacity 0.5s;
+        }
+    </style>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+</script>
+
+    <div id="loading">CONSTRUCTING LATTICE...</div>
+    <div id="canvas-container"></div>
+
+    <div id="ui-layer">
+        <div class="hud-panel">
+            <h1 id="title">Breather Surface</h1>
+            <span class="subtitle" id="status">Structure: Stable</span>
+            <div class="description" id="desc">
+                A mathematical surface derived from the sine-Gordon equation. Visualized here as a high-tensile energy
+                lattice.
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="morph-btn">Reconfigure</button>
+        </div>
+    </div>
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+    uniform float time;
+    uniform float morphFactor;
+    
+    attribute vec3 positionA;
+    attribute vec3 positionB;
+    
+    varying vec3 vPos;
+    varying float vPulse;
+
+    void main() {
+        vec3 pos = mix(positionA, positionB, morphFactor);
+        
+        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+        gl_Position = projectionMatrix * mvPosition;
+        
+        vPos = pos;
+        
+        vPulse = sin(pos.y * 0.2 - time * 3.0) * 0.5 + 0.5;
+    }
+</script>
+
+    <script type="x-shader/x-fragment" id="fragmentShader">
+    varying vec3 vPos;
+    varying float vPulse;
+    
+    uniform float time;
+
+    void main() {
+        vec3 colorBottom = vec3(0.0, 0.1, 0.4);
+        vec3 colorTop = vec3(1.0, 0.0, 0.3);
+        
+        float heightPct = smoothstep(-25.0, 25.0, vPos.y);
+        
+        vec3 finalColor = mix(colorBottom, colorTop, heightPct);
+        
+        float wave = smoothstep(0.9, 1.0, vPulse); 
+        finalColor += vec3(0.5, 0.8, 1.0) * wave;
+
+        gl_FragColor = vec4(finalColor, 1.0);
+    }
+</script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+        const GRID_RES = 90;
+        const VERTEX_COUNT = GRID_RES * GRID_RES;
+        const TARGET_SIZE = 50.0;
+
+        let currentShapeIndex = 0;
+        let nextShapeIndex = 1;
+        let isMorphing = false;
+        let morphStartTime = 0;
+        const MORPH_DURATION = 1.5;
+
+        const titleEl = document.getElementById('title');
+        const descEl = document.getElementById('desc');
+        const statusEl = document.getElementById('status');
+        const btnEl = document.getElementById('morph-btn');
+        const loadingEl = document.getElementById('loading');
+
+        function getUV(i) {
+            const u = (i % GRID_RES) / (GRID_RES - 1);
+            const v = Math.floor(i / GRID_RES) / (GRID_RES - 1);
+            return { u, v };
+        }
+
+        const SHAPES = [
+            {
+                name: "Breather Surface",
+                desc: "A rhythmic standing wave surface derived from the sine-Gordon equation.",
+                gen: (i) => {
+                    const { u: rawU, v: rawV } = getUV(i);
+                    const u = (rawU - 0.5) * 14;
+                    const v = (rawV - 0.5) * 30;
+
+                    const aa = 0.4;
+                    const w = Math.sqrt(1 - aa * aa);
+
+                    const cosh_au = Math.cosh(aa * u);
+                    const sinh_au = Math.sinh(aa * u);
+                    const sin_wv = Math.sin(w * v);
+                    const cos_wv = Math.cos(w * v);
+                    const den = aa * ((1 - aa * aa) * cosh_au * cosh_au + aa * aa * sin_wv * sin_wv);
+
+                    if (Math.abs(den) < 0.001) return new THREE.Vector3(0, 0, 0);
+
+                    const x = -u + (2 * (1 - aa * aa) * cosh_au * sinh_au) / den;
+                    const y = (2 * w * cosh_au * (-w * Math.cos(v) * cos_wv - Math.sin(v) * sin_wv)) / den;
+                    const z = (2 * w * cosh_au * (-w * Math.sin(v) * cos_wv + Math.cos(v) * sin_wv)) / den;
+
+                    return new THREE.Vector3(x, z, y);
+                }
+            },
+            {
+                name: "Klein Bottle",
+                desc: "A non-orientable surface where inside and outside are indistinguishable.",
+                gen: (i) => {
+                    const { u: rawU, v: rawV } = getUV(i);
+                    const u = rawU * Math.PI * 2;
+                    const v = rawV * Math.PI * 2;
+                    const r = 3;
+
+                    const cosU = Math.cos(u), sinU = Math.sin(u);
+                    const cosU2 = Math.cos(u / 2), sinU2 = Math.sin(u / 2);
+                    const cosV = Math.cos(v), sinV = Math.sin(v);
+                    const sin2V = Math.sin(2 * v);
+
+                    const x = (r + cosU2 * sinV - sinU2 * sin2V) * cosU;
+                    const y = (r + cosU2 * sinV - sinU2 * sin2V) * sinU;
+                    const z = sinU2 * sinV + cosU2 * sin2V;
+
+                    return new THREE.Vector3(x, y, z * 3.0);
+                }
+            },
+            {
+                name: "Super-Torus",
+                desc: "A toroidal topology deformed by 'superformula' parameters.",
+                gen: (i) => {
+                    const { u: rawU, v: rawV } = getUV(i);
+                    const u = rawU * Math.PI * 2;
+                    const v = rawV * Math.PI * 2;
+
+                    const sf = (ang, m, n1, n2, n3) => {
+                        const a = 1, b = 1;
+                        const t1 = Math.abs(Math.cos(m * ang / 4) / a);
+                        const t2 = Math.abs(Math.sin(m * ang / 4) / b);
+                        return Math.pow(Math.pow(t1, n2) + Math.pow(t2, n3), -1 / n1);
+                    };
+
+                    const R = 8;
+                    const rBase = 3;
+                    const rMod = sf(v, 6, 20, 10, 10);
+                    const r = rBase * rMod;
+
+                    const x = (R + r * Math.cos(v)) * Math.cos(u);
+                    const y = (R + r * Math.cos(v)) * Math.sin(u);
+                    const z = r * Math.sin(v);
+
+                    return new THREE.Vector3(x, z, y);
+                }
+            },
+            {
+                name: "Dini's Surface",
+                desc: "A surface of constant negative curvature, obtained by twisting a pseudosphere.",
+                gen: (i) => {
+                    const { u: rawU, v: rawV } = getUV(i);
+                    const u = rawU * 4 * Math.PI;
+                    const v = 0.01 + rawV * 2.0;
+
+                    const a = 1.0;
+                    const b = 0.2;
+
+                    const x = a * Math.cos(u) * Math.sin(v);
+                    const y = a * Math.sin(u) * Math.sin(v);
+                    const z = a * (Math.cos(v) + Math.log(Math.tan(v / 2))) + b * u;
+
+                    return new THREE.Vector3(x * 3.0, z * 2.0 - 10.0, y * 3.0);
+                }
+            }
+        ];
+
+        const CACHE = [];
+
+        function generateData() {
+            SHAPES.forEach((shape) => {
+                const arr = new Float32Array(VERTEX_COUNT * 3);
+
+                let min = new THREE.Vector3(Infinity, Infinity, Infinity);
+                let max = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
+
+                for (let i = 0; i < VERTEX_COUNT; i++) {
+                    const vec = shape.gen(i);
+                    arr[i * 3] = vec.x;
+                    arr[i * 3 + 1] = vec.y;
+                    arr[i * 3 + 2] = vec.z;
+                    min.min(vec);
+                    max.max(vec);
+                }
+
+                const center = new THREE.Vector3().addVectors(min, max).multiplyScalar(0.5);
+                const sizeVec = new THREE.Vector3().subVectors(max, min);
+                const maxDim = Math.max(sizeVec.x, sizeVec.y, sizeVec.z);
+                const scale = TARGET_SIZE / maxDim;
+
+                for (let i = 0; i < VERTEX_COUNT; i++) {
+                    arr[i * 3] = (arr[i * 3] - center.x) * scale;
+                    arr[i * 3 + 1] = (arr[i * 3 + 1] - center.y) * scale;
+                    arr[i * 3 + 2] = (arr[i * 3 + 2] - center.z) * scale;
+                }
+                CACHE.push(arr);
+            });
+        }
+
+        generateData();
+        loadingEl.style.opacity = 0;
+
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050508);
+        scene.fog = new THREE.Fog(0x050508, 50, 150);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 15, 55);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 2.0;
+
+        const geometry = new THREE.BufferGeometry();
+
+        const indices = [];
+        for (let j = 0; j < GRID_RES; j++) {
+            for (let i = 0; i < GRID_RES; i++) {
+                const a = j * GRID_RES + i;
+                if (i < GRID_RES - 1) {
+                    indices.push(a, a + 1);
+                }
+                if (j < GRID_RES - 1) {
+                    indices.push(a, a + GRID_RES);
+                }
+            }
+        }
+        geometry.setIndex(indices);
+
+        const startDataA = new Float32Array(CACHE[0]);
+        const startDataB = new Float32Array(CACHE[0]);
+
+        geometry.setAttribute('positionA', new THREE.BufferAttribute(startDataA, 3));
+        geometry.setAttribute('positionB', new THREE.BufferAttribute(startDataB, 3));
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(CACHE[0]), 3));
+
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0 },
+                morphFactor: { value: 0 }
+            },
+            vertexShader: document.getElementById('vertexShader').textContent,
+            fragmentShader: document.getElementById('fragmentShader').textContent,
+            transparent: true,
+            depthTest: true,
+            depthWrite: true,
+            side: THREE.DoubleSide,
+            linewidth: 2
+        });
+
+        const mesh = new THREE.LineSegments(geometry, material);
+        scene.add(mesh);
+
+        const composer = new EffectComposer(renderer);
+        composer.addPass(new RenderPass(scene, camera));
+
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0.2;
+        bloomPass.strength = 1.0;
+        bloomPass.radius = 0.3;
+        composer.addPass(bloomPass);
+
+        function triggerMorph() {
+            if (isMorphing) return;
+            isMorphing = true;
+            morphStartTime = performance.now();
+            btnEl.disabled = true;
+            statusEl.innerText = "Reconfiguring Lattice...";
+
+            const prevB = geometry.attributes.positionB.array;
+            geometry.attributes.positionA.array.set(prevB);
+
+            nextShapeIndex = (currentShapeIndex + 1) % SHAPES.length;
+            geometry.attributes.positionB.array.set(CACHE[nextShapeIndex]);
+
+            geometry.attributes.positionA.needsUpdate = true;
+            geometry.attributes.positionB.needsUpdate = true;
+
+            material.uniforms.morphFactor.value = 0;
+
+            titleEl.innerText = `${SHAPES[currentShapeIndex].name} >> ${SHAPES[nextShapeIndex].name}`;
+        }
+
+        btnEl.addEventListener('click', triggerMorph);
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = clock.getElapsedTime();
+            material.uniforms.time.value = time;
+
+            controls.update();
+
+            if (isMorphing) {
+                const elapsed = (performance.now() - morphStartTime) / 1000;
+                let progress = Math.min(elapsed / MORPH_DURATION, 1.0);
+
+                const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+
+                material.uniforms.morphFactor.value = ease;
+
+                if (progress >= 1.0) {
+                    isMorphing = false;
+                    currentShapeIndex = nextShapeIndex;
+                    titleEl.innerText = SHAPES[currentShapeIndex].name;
+                    descEl.innerText = SHAPES[currentShapeIndex].desc;
+                    statusEl.innerText = "Structure: Stable";
+                    btnEl.disabled = false;
+                }
+            }
+
+            composer.render();
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+
+</body>
+
+</html>
