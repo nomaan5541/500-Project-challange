@@ -1,0 +1,9 @@
+body { margin: 0; overflow: hidden; background-color: #1a1a1a; font-family: sans-serif; }
+        #fileInput { display: none; }
+        
+        .lil-gui.root {
+            position: absolute;
+            top: auto !important;
+            bottom: 10px;
+            right: 10px;
+        }
