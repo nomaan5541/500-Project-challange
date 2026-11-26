@@ -1,0 +1,15 @@
+body { margin: 0; overflow: hidden; background-color: #0a0a0a; font-family: 'Segoe UI', sans-serif; }
+        
+        #gui-container { 
+            position: absolute; 
+            bottom: 20px; 
+            right: 20px; 
+            z-index: 10;
+        }
+        
+        /* GUI Scroll styling */
+        .lil-gui { 
+            --width: 320px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
