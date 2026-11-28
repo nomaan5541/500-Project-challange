@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Icicle CSS named colors | CodeTap</title>
+	<link rel="stylesheet" href="./style.css">
+	<link rel="apple-touch-icon" href="https://codetap.org/assets/img/favicon.png">
+	<link rel="icon" type="image/png" href="https://codetap.org/assets/img/favicon.png">
+
+</head>
+
+<body>
+	<!DOCTYPE html>
+	<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Learn CSS - Named colors</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;700&family=Work+Sans:wght@300;400;600&display=swap"
+			rel="stylesheet">
+		<link rel="stylesheet" href="./style.css">
+	</head>
+
+	<body>
+		<main>
+			<div class="wrapper">
+				<h1 class="page-title">All CSS named colors</h1>
+				<div id="color-grid" class="color-grid">
+					<!-- Colors will be injected here via JS -->
+				</div>
+			</div>
+		</main>
+
+		<div id="color-modal" class="modal hidden">
+			<div class="modal-content">
+				<span class="close-button">&times;</span>
+				<div id="modal-color-display" class="modal-color-box"></div>
+				<h2 id="modal-color-name">Color Name</h2>
+				<div class="color-values">
+					<p><strong>RGB:</strong> <span id="modal-rgb"></span></p>
+					<p><strong>HEX:</strong> <span id="modal-hex"></span></p>
+					<p><strong>CMYK:</strong> <span id="modal-cmyk"></span></p>
+				</div>
+			</div>
+		</div>
+
+		<script src="script.js"></script>
+	</body>
+	<script src="./script.js"></script>
+
+</body>
+
+</html>
