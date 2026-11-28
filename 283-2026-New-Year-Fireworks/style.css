@@ -1,0 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Gabarito:wght@900&display=swap");
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #141414;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
