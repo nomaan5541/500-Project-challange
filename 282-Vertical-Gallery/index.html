@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Vertical Gallery | CodeTap</title>
+  <link rel="apple-touch-icon" href="https://codetap.org/assets/img/favicon.png">
+  <link rel="icon" type="image/png" href="https://codetap.org/assets/img/favicon.png">
+
+</head>
+
+<body>
+  <!doctype html>
+  <html lang="ru">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3D Gallery — fast & stable</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box
+      }
+
+      :root {
+        --index: calc(1vw + 1vh);
+        --transition: cubic-bezier(.1, .7, 0, 1);
+        --gap-base: .2rem;
+        --shift: 0px;
+        /* сдвиг контейнера при открытии крайних */
+      }
+
+      body {
+        background: #141414;
+        min-height: 100vh;
+        overflow: visible
+      }
+
+      .wrapper {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: visible
+      }
+
+      .items {
+        display: flex;
+        gap: var(--gap, var(--gap-base));
+        perspective: calc(var(--index) * 35);
+        perspective-origin: 50% 50%;
+        transform: translateX(var(--shift));
+        transform-style: preserve-3d;
+        will-change: transform;
+        overflow: visible;
+        transition: transform .6s var(--transition);
+        /* расширяем hit-area у краёв, чтобы указатель не «выпадал» */
+        padding-inline: 48px;
+        margin-inline: -48px;
+      }
+
+      .items.hovering {
+        --gap: calc(var(--gap-base) / 2);
+      }
+
+      .item {
+        position: relative;
+        width: calc(var(--index) * 3);
+        height: calc(var(--index) * 18);
+        background: #222 center/cover no-repeat;
+        cursor: pointer;
+        transition: transform 1.25s var(--transition), width .5s var(--transition);
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+        will-change: transform, width;
+        outline: none;
+        border-radius: 100px;
+        flex: 0 0 auto;
+        user-select: none;
+      }
+
+      /* Hover layout */
+      .item.is-hover-main {
+        transform: translateZ(calc(var(--index) * 10));
+        z-index: 10;
+      }
+
+      .item.is-right-1 {
+        transform: translateZ(calc(var(--index) * 8.5)) rotateY(35deg);
+        z-index: 9;
+      }
+
+      .item.is-right-2 {
+        transform: translateZ(calc(var(--index) * 5.6)) rotateY(40deg);
+        z-index: 8;
+      }
+
+      .item.is-right-3 {
+        transform: translateZ(calc(var(--index) * 2.5)) rotateY(30deg);
+        z-index: 7;
+      }
+
+      .item.is-right-4 {
+        transform: translateZ(calc(var(--index) * 0.6)) rotateY(15deg);
+        z-index: 6;
+      }
+
+      .item.is-left-1 {
+        transform: translateZ(calc(var(--index) * 8.5)) rotateY(-35deg);
+        z-index: 9;
+      }
+
+      .item.is-left-2 {
+        transform: translateZ(calc(var(--index) * 5.6)) rotateY(-40deg);
+        z-index: 8;
+      }
+
+      .item.is-left-3 {
+        transform: translateZ(calc(var(--index) * 2.5)) rotateY(-30deg);
+        z-index: 7;
+      }
+
+      .item.is-left-4 {
+        transform: translateZ(calc(var(--index) * 0.6)) rotateY(-15deg);
+        z-index: 6;
+      }
+
+      /* Open state */
+      .items.is-open .item {
+        transition: transform .8s var(--transition), width .6s var(--transition);
+      }
+
+      .item.is-open {
+        width: 20vw;
+        z-index: 100;
+        transform: translateZ(calc(var(--index) * 10));
+      }
+
+      html,
+      body,
+      .wrapper,
+      .items {
+        overflow: visible !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="items" id="gallery">
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f1/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f2/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f3/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f4/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f5/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f6/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f7/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f8/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f9/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f10/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f11/1200/1800)"></div>
+        <div class="item" tabindex="0" style="background-image:url(https://picsum.photos/seed/f12/1200/1800)"></div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const container = document.getElementById('gallery');
+        const items = Array.from(container.querySelectorAll('.item'));
+
+        const bands = [
+          'is-hover-main',
+          ['is-left-1', 'is-right-1'],
+          ['is-left-2', 'is-right-2'],
+          ['is-left-3', 'is-right-3'],
+          ['is-left-4', 'is-right-4'],
+        ];
+
+        let openIndex = -1;
+        let hoverIndex = -1;
+
+        // Статическая равномерная сетка + направленная гистерезис
+        let padLeft = 0;
+        let firstCenter = 0;
+        let step = 0;               // itemWidth + gap
+        let epsBase = 12;           // базовый deadband
+        let prevX = null, prevT = 0;
+
+        function metric() {
+          const cs = getComputedStyle(container);
+          padLeft = parseFloat(cs.paddingLeft) || 0;
+          const w = items[0]?.offsetWidth || 0;
+          const gap = parseFloat(cs.gap) || 0;
+          step = w + gap;
+          firstCenter = (items[0]?.offsetLeft || 0) + w / 2;
+          epsBase = Math.max(10, step * 0.08); // ~8% шага
+        }
+
+        function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+        function indexFromX(x) { return clamp(Math.round((x - firstCenter) / step), 0, items.length - 1); }
+        function centerFor(i) { return firstCenter + i * step; }
+
+        function clearClasses() { items.forEach(el => el.className = 'item'); }
+
+        function applyHoverState(idx) {
+          clearClasses();
+          if (idx < 0) return;
+          container.classList.add('hovering');
+          items[idx].classList.add(bands[0]);
+          for (let d = 1; d < bands.length; d++) {
+            const L = idx - d, R = idx + d;
+            if (L >= 0) items[L].classList.add(bands[d][0]);
+            if (R < items.length) items[R].classList.add(bands[d][1]);
+          }
+        }
+
+        function centerItem(idx) {
+          const wrap = container.getBoundingClientRect();
+          const it = items[idx].getBoundingClientRect();
+          const centerX = wrap.left + wrap.width / 2;
+          const delta = centerX - (it.left + it.width / 2);
+          const maxShift = wrap.width * 0.35;
+          const clamped = Math.max(-maxShift, Math.min(maxShift, delta));
+          container.style.setProperty('--shift', clamped.toFixed(1) + 'px');
+        }
+        function resetShift() { container.style.setProperty('--shift', '0px'); }
+
+        function openItem(idx) {
+          clearClasses();
+          container.classList.add('is-open');
+          items[idx].classList.add('is-open');
+          openIndex = idx;
+          centerItem(idx);
+        }
+
+        function closeOpen() {
+          openIndex = -1;
+          container.classList.remove('is-open');
+          resetShift();
+          clearClasses();
+        }
+
+        // включаем hover и пересчитываем сетку после применения уменьшенного gap
+        function ensureHoveringOnce() {
+          if (container.classList.contains('hovering')) return;
+          container.classList.add('hovering');
+          // один reflow для точной сетки при уменьшенном gap
+          requestAnimationFrame(metric);
+        }
+
+        // динамическая направленная гистерезис: меньше при быстром движении
+        function effectiveEPS(x) {
+          if (prevX == null) return epsBase;
+          const dx = Math.abs(x - prevX);
+          const now = performance.now();
+          const dt = Math.max(1, now - (prevT || now));
+          const v = dx / dt;                 // px/ms
+          prevT = now;
+          // чем быстрее двигаемся, тем меньше deadband, но не ниже 40% базового
+          const k = clamp(1 - v * 0.8, 0.4, 1);
+          return epsBase * k;
+        }
+
+        // pointer events
+        container.addEventListener('pointerenter', () => {
+          if (openIndex !== -1) return;
+          ensureHoveringOnce();
+        });
+
+        container.addEventListener('pointermove', (e) => {
+          if (openIndex !== -1) return;
+          ensureHoveringOnce();
+
+          const rect = container.getBoundingClientRect();
+          const x = e.clientX - rect.left - padLeft; // локальная координата
+          const idxRaw = indexFromX(x);
+
+          // направленная логика вокруг текущего центра
+          let idx = idxRaw;
+          if (hoverIndex >= 0) {
+            const c = centerFor(hoverIndex);
+            const movingRight = prevX == null ? true : x > prevX;
+            const eps = effectiveEPS(x);
+            if (movingRight && x < c + eps) idx = hoverIndex;
+            if (!movingRight && x > c - eps) idx = hoverIndex;
+          }
+
+          prevX = x;
+
+          if (idx !== hoverIndex) {
+            hoverIndex = idx;
+            applyHoverState(idx);
+          }
+        }, { passive: true });
+
+        // микро-выходы игнорируем (буфер 48px)
+        container.addEventListener('pointerleave', (e) => {
+          if (openIndex !== -1) return;
+          const r = container.getBoundingClientRect(), M = 48;
+          if (e.clientX > r.left - M && e.clientX < r.right + M &&
+            e.clientY > r.top - M && e.clientY < r.bottom + M) return;
+          hoverIndex = -1; prevX = null; prevT = 0;
+          container.classList.remove('hovering');
+          clearClasses();
+        }, { passive: true });
+
+        // клик: по карточке или по её зоне — открывает/закрывает выбранную
+        container.addEventListener('click', (e) => {
+          // если кликнули по карточке — берём её индекс
+          const el = e.target.closest('.item');
+          let idx = -1;
+          if (el) idx = items.indexOf(el);
+          else if (hoverIndex >= 0) idx = hoverIndex;
+
+          if (idx < 0) return;
+          if (openIndex === idx) closeOpen(); else openItem(idx);
+        });
+
+        // доступность
+        items.forEach((el, idx) => {
+          el.addEventListener('keydown', (e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) {
+              e.preventDefault();
+              if (openIndex === idx) closeOpen(); else openItem(idx);
+            }
+          });
+        });
+        container.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && openIndex !== -1) {
+            e.preventDefault(); closeOpen();
+          }
+        });
+
+        window.addEventListener('resize', metric);
+        metric();
+
+        container.addEventListener('dragstart', e => e.preventDefault());
+      })();
+    </script>
+  </body>
+
+  </html>
+
+</body>
+
+</html>
